@@ -1,0 +1,302 @@
+.hidden{display:none;}
+body {
+max-width: 360px;
+margin: 0 auto;
+}
+
+h1.app-title{width: 100%;
+  text-align: center;
+  top: 24px;
+  position: absolute;
+  margin: auto;
+  left: 0;}
+h1.app-title img{width:200px;}
+
+html{
+overflow:auto;
+user-select:none;
+background:black repeating-linear-gradient(-69deg, #000, #2e2920 50%, #2e2920 50%, #000) top center;
+background-size:9px 9px;
+background:black url(bg.jpg) top center;
+background-size:160px;
+padding:72px 0px 24px;
+}
+
+:root{
+--color-best:#3f753b;
+--color-good:#628c5b;
+--color-norm:#85a47b;
+--color-poor:#cb8d73;
+--color-sick:#cb6053;
+}
+
+.block, .block:not(:last-child){max-width:360px; margin:0px auto;}
+
+.item{
+background:
+repeating-linear-gradient(var(--angle1), transparent, transparent 25%, var(--softest-thing) 50%, var(--softest-space) 50%, transparent 75%, transparent),
+repeating-linear-gradient(var(--angle1), var(--color1), var(--color1) 50%, var(--color2) 50%, var(--color2));
+}
+.item{width:25%; aspect-ratio:1; float:left; border:1px solid var(--bold-thing);}
+.item>div {padding:2px; background:repeating-linear-gradient(transparent), var(--pattern); background-position:-1px -1px;}
+.item p {border:2px dashed var(--decor2); aspect-ratio:1; padding:4px;}
+.item a {
+display:block;
+aspect-ratio: 1;
+background: var(--soft-thing);
+border-radius: 100%;
+background-position: center;
+background-size: 108%;
+color: var(--bold-space);
+font-size: 2rem;
+font-family: var(--mono-font);
+}
+.item a i{display:flex; width:100%; aspect-ratio:1;  border-radius:100%; border:1px solid #0007}
+.item a i b {margin: auto;}
+.item.special a i, .item.special>div {backdrop-filter:sepia()}
+.item:first-child, .item:first-child>div{border-top-left-radius:16px;}
+.item:first-child p{border-top-left-radius:14px;}
+.item:nth-child(4), .item:nth-child(4)>div{border-top-right-radius:16px;}
+.item:nth-child(4) p{border-top-right-radius:14px;}
+
+/*
+.sI {--decor1: #fff3}
+.sE {--decor1: #0002}
+.sJ {--decor2: #0007}
+.sP {--decor2: #fff9}
+*/
+
+.sI {--decor2: #fff9}
+.sE {--decor2: #0007}
+.sJ {--decor1: #0002}
+.sP {--decor1: #fff3}
+
+.V1 {--angle1: 135deg}
+.E1 {--angle1: 45deg}
+.P1 {--angle1: 180deg}
+.L1 {--angle1: 90deg}
+
+.V2 {--pattern: repeating-linear-gradient(135deg, transparent 0px 4px, var(--decor1) 4px 6px, transparent 6px 10px)}
+.E2 {--pattern: repeating-linear-gradient(45deg, transparent 0px 4px, var(--decor1) 4px 6px, transparent 6px 10px)}
+.P2 {--pattern: repeating-linear-gradient(180deg, transparent 0px 4px, var(--decor1) 4px 6px, transparent 6px 10px)}
+.L2 {--pattern: repeating-linear-gradient(90deg, transparent 0px 4px, var(--decor1) 4px 6px, transparent 6px 10px)}
+
+.socbest {--color1: #1ea51efa}
+.psybest {--color2: #1ea51efa}
+.socgood {--color1: #7fcb7fed}
+.psygood {--color2: #7fcb7fed}
+.socnorm {--color1: #7fb2cbed}
+.psynorm {--color2: #7fb2cbed}
+.socpoor {--color1: #cb7fe5ed}
+.psypoor {--color2: #cb7fe5ed}
+.socsick {--color1: #d21e1efa}
+.psysick {--color2: #d21e1efa}
+.socnone {--color1: #c3c4c2ed}
+.psynone {--color2: #c3c4c2ed}
+
+.best, .good {}
+.norm {}
+.poor {}
+.sick {}
+
+
+.blank {background-color:var(--bold-space); background-image:linear-gradient(var(--bold-space) 0px, transparent 360px); clear:both; padding:16px; border:1px solid var(--bold-thing);}
+hr {border:2px dashed var(--bolder-thing); margin:1em calc(-1em + 2px); height:0; border-bottom:0;}
+hr:first-child {margin-top:calc(-1em + 2px); margin-bottom: 2em;}
+hr:last-child {margin-bottom:calc(-1em + 2px); margin-top: 2em;}
+.bottom-rounded {border-bottom-left-radius:1em; border-bottom-right-radius:1em;}
+.item p{margin:0px;}
+
+.header {
+border-top-left-radius:1em;
+border-top-right-radius:1em;
+background: var(--contrasty-orange);
+border: 1px solid var(--bolder-thing);
+overflow:hidden;
+}
+
+.header h2 {
+padding: 1em;
+background: var(--softer-space);
+  color: var(--bold-thing);
+  text-align: center;
+  background-image: url(denim.png);
+  background-size:360px;
+
+}
+
+td:has(> #userpic) {
+height:112px;
+}
+#userpic {
+background: var(--softest-thing);
+  display: flex;
+  position:relatve;
+  height: 100%;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--soft-thing);
+font-size:2rem;
+color:var(--bold-space);
+font-family: var(--mono-font);
+}
+
+#userpic :is(img, i) {
+width: 76%;
+aspect-ratio: 1;
+margin: auto;
+border-radius: 100%;
+border:1px solid var(--soft-thing);
+display:flex;
+background:var(--soft-thing);
+}
+#userpic i b {
+margin:auto;
+}
+
+[disabled] {
+background: var(--softest-thing);
+  color: var(--soft-thing);
+  cursor: not-allowed;
+}
+
+
+#diagnosis ul {
+border-radius:0.5rem;
+overflow:hidden;
+}
+
+#diagnosis h3 {
+text-align:center;
+font-weight:bold;
+}
+
+#diagnosis td {
+font-size:var(--smaller);
+}
+
+#diagnosis button {
+letter-spacing:-3%;
+}
+
+#diagnosis td div {
+border-radius:0.5rem;
+overflow:hidden;
+}
+
+#diagnosis .best td :is(button, div, i) {background:var(--softer-green);}
+#diagnosis .good td :is(button, div, i) {background:var(--softer-green);}
+#diagnosis .norm td :is(button, div, i) {background:var(--softer-blue);}
+#diagnosis .poor td :is(button, div, i) {background:var(--softer-purple);}
+#diagnosis .sick td :is(button, div, i) {background:var(--softer-red);}
+#diagnosis .none td :is(button, div, i) {background:var(--soft-thing);}
+
+/*
+#diagnosis .best button, #diagnosis .good button {background:var(--softer-green);}
+#diagnosis .norm button {background:var(--softer-blue);}
+#diagnosis .poor button {background:var(--softer-purple);}
+#diagnosis .sick button {background:var(--softer-red);}
+#diagnosis .none button {background:var(--soft-thing);}
+*/
+
+#diagnosis td:first-child div {text-align:right;}
+#diagnosis td:first-child div button {border-radius: 5rem .5rem .5rem 5rem;}
+#diagnosis td:nth-child(2) div button {border-radius: .5rem 5rem 5rem .5rem;}
+
+#diagnosis .grid i{
+sbackground: var(--softer-green);
+  border-radius: 0.5rem;
+  padding: 12% 12% 0;
+  display: block;
+  aspect-ratio: 1;
+}
+
+#diagnosis img {
+cursor:pointer;
+border: 1px solid var(--soft-thing);
+border-radius: 100%;
+}
+
+#diagnosis i a {
+display: flex;
+aspect-ratio: 1;
+border: 1px solid var(--soft-thing);
+border-radius: 100%;
+background: var(--soft-space);
+color: var(--bold-space);
+font-size: 3rem;
+font-family: var(--mono-font);
+}
+
+#diagnosis i a b {
+margin: auto;
+}
+#diagnosis div button {
+color: var(--boldest-space);
+text-decoration: underline;
+border: 0;
+outline: 0;
+}
+
+
+
+.at-spec h3 {
+font-size:var(--large);
+}
+.at-spec i {
+display:block;
+}
+.v {background:red}
+
+#selector {
+display:table;
+background: var(--contrasty-orange);
+}
+
+#selector.hidden {
+display:none;
+}
+
+#selector i {
+width: calc(100% / 4);
+aspect-ratio: 1;
+float: left;
+background: var(--softer-space);
+background-image: url(denim.png);
+background-size: 360px;
+border: 1px solid var(--bold-thing);
+display: flex;
+}
+
+#selector i.selected {
+background: var(--bold-space);
+}
+
+#selector i.selected a {
+color: var(--bold-thing);
+}
+
+#selector i a {
+margin: auto;
+display: flex;
+background: var(--soft-thing);
+color: var(--bold-space);
+border: 1px solid var(--soft-thing);
+width: 80%;
+aspect-ratio: 1;
+border-radius: 100%;
+overflow: hidden;
+font-size: 2rem;
+font-family: var(--mono-font);
+}
+
+#selector i a :is(b, img) {
+margin: auto;
+}
+
+.at-home h2 {
+font-size: var(--large);
+}
+
+.at-edit.hint, .at-edit.hint.hidden:has(h3) {display: none;}
+.at-edit.hint:has(h3) {display: block;}
