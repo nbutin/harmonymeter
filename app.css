@@ -6,7 +6,7 @@ margin: 0 auto;
 
 h1.app-title{width: 100%;
   text-align: center;
-  top: 24px;
+  top: 2rem;
   position: absolute;
   margin: auto;
   left: 0;}
@@ -240,10 +240,10 @@ outline: 0;
 
 
 
-.at-spec h3 {
+.-spec h3 {
 font-size:var(--large);
 }
-.at-spec i {
+.-spec i {
 display:block;
 }
 .v {background:red}
@@ -294,9 +294,13 @@ font-family: var(--mono-font);
 margin: auto;
 }
 
-.at-home h2 {
+.-main h2 {
 font-size: var(--large);
 }
 
-.at-edit.hint, .at-edit.hint.hidden:has(h3) {display: none;}
-.at-edit.hint:has(h3) {display: block;}
+.-edit.hint, .-edit.hint.hidden:has(h3) {display: none;}
+.-edit.hint:has(h3) {display: block;}
+
+
+.-x {color:red;}
+label {display:block; margin: 0 0 .25rem 1rem}

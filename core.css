@@ -132,6 +132,7 @@ a[href].green-marked,
 a[onclick].green-marked {
 background: var(--soft-green);
 color: var(--contrasty-green);
+border-radius: .5rem;
 }
 
 .red-marked,
@@ -140,6 +141,7 @@ a[href].red-marked,
 a[onclick].red-marked {
 background: var(--soft-red);
 color: var(--contrasty-red);
+border-radius: .5rem;
 }
 
 .blue-marked,
@@ -148,6 +150,7 @@ a[href].blue-marked,
 a[onclick].blue-marked {
 background: var(--soft-blue);
 color: var(--contrasty-blue);
+border-radius: .5rem;
 }
 
 .purple-marked,
@@ -156,6 +159,7 @@ a[href].purple-marked,
 a[onclick].purple-marked {
 background: var(--soft-purple);
 color: var(--contrasty-purple);
+border-radius: .5rem;
 }
 
 .orange-marked,
@@ -164,6 +168,7 @@ a[href].orange-marked,
 a[onclick].orange-marked {
 background: var(--soft-orange);
 color: var(--contrasty-orange);
+border-radius: .5rem;
 }
 
 
@@ -314,7 +319,8 @@ img {
 
 input[type=checkbox],
 input[type=radio] {
-  vertical-align: baseline;
+vertical-align: middle;
+margin-right: 0.25rem;
 }
 
 small {
@@ -352,7 +358,7 @@ text-align: inherit;
 
 
 
-select, input, textarea, button {
+select, input:not([type="radio"], [type="checkbox"]), textarea, button {
 appearance: none;
 border: 1px solid var(--soft-thing);
 border-radius: var(--control-radius);
@@ -456,4 +462,12 @@ text-decoration:underline;
 
 .fullwidth {
 width: 100%;
+}
+
+:not(body).-vk {
+display: none;
+}
+
+body.-vk .-vk {
+display: unset;
 }
