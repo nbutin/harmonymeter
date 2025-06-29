@@ -476,7 +476,7 @@ function saveProfile() {
 }
 
 function fromStorage(key) {
-    let val = JSON.parse(localStorage[key] || '');
+    let val = JSON.parse(localStorage[key] || '""');
     return val;
 }
 
