@@ -490,8 +490,8 @@ function selectFile() {
 
 function loadValues() {
     var stored = fromStorage('characters');
-    (typeof(stored) == 'object'&& stored.length && stored || {}).forEach((v, i) => {
-        if (!'1 2 3 4 5 6 7 8 9 '.includes(i)) {
+    (typeof(stored) == 'object' && stored.length && stored || []).forEach((v, i) => {
+        if (!'1 2 3 4 5 6 7 8 9'.includes(i)) {
             characters[i] = v;
         }
     });
