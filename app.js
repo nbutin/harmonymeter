@@ -806,21 +806,34 @@ function visit(name) {
 
 function share() {
     //replace with opening an external link to the corresponding post
-    var theme = 'story-theme';
-    sticker = 'sticker';
-    vkBridge.send('VKWebAppShowStoryBox', {
-        "background_type": "image",
-        "url": 'story.png',
-        "locked": true,
-    })
-    .then(data => {
-        is_shared = true;
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    if (window.vk_user_id) {
+        var theme = 'story-theme';
+        sticker = 'sticker';
+        vkBridge.send('VKWebAppShowStoryBox', {
+            "background_type": "image",
+            "url": `${location.origin}/story.png`,
+            "locked": true,
+        });
+    } else {
+        //
+    }
 }
 
 function setup() {
-    
+    if (window.vk_user_id) {
+        vkBridge
+        .send("VKWebAppRecommend")
+        .finally(() => {
+            vkBridge
+            .send("VKWebAppAddToFavorites")
+            .finally(() => {
+                vkBridge
+                .send("VKWebAppAllowNotifications")
+                .finally(() => {
+                });
+            });
+        });
+    } else {
+        location.hash = '-settings';
+    }
 }

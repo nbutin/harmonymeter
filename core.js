@@ -113,3 +113,100 @@ function vkInit() {
     });
 }
 
+
+//~ function visit(address) {
+    //~ var url = `https://bastyon.com/${address || app_author}`;
+    //~ if (sdk.applicationInfo) {
+        //~ sdk.helpers.channel(address || app_author)
+        //~ .catch(() => {
+            //~ openExternalLink(url);
+        //~ });
+    //~ } else {
+        //~ openLinkInNewWindow(url);
+    //~ }
+//~ }
+
+
+//~ function openExternalLink(url) {
+    //~ if (!sdk.applicationInfo) {
+        //~ openLinkInNewWindow(url);
+    //~ } else {
+        //~ sdk.openExternalLink(url)
+        //~ .catch(() => {
+            //~ sdk.permissions.request(['externallink'])
+            //~ .then(() => {
+                //~ sdk.openExternalLink(url);
+            //~ })
+            //~ .catch(() => {
+                //~ sdk.helpers.opensettings();
+            //~ });
+        //~ });
+    //~ }
+//~ }
+
+
+//~ function openLinkInNewWindow(href) {
+    //~ var a = document.createElement('a');
+    //~ a.href = href;
+    //~ a.setAttribute('target', '_blank');
+    //~ a.click();
+//~ }
+
+
+
+
+//~ function _savePropsVk(key, callback) {
+    //~ const vk_limit = 4096;
+    //~ localStorage['val_'] = JSON.stringify(val_);
+    //~ let operation;
+    //~ (key && [key] || Object.keys(vk_stored)).forEach(k => {
+        //~ let [func, value] = [vk_stored[k], val_[k]];
+        //~ if (func) value = func(val_[k]);
+        //~ let str = JSON.stringify(value);
+        //~ if (new Blob([str]).size <= vk_limit) {
+            //~ console.log('%s sent to vk storage', k);
+            //~ operation = vkBridge.send("VKWebAppStorageSet", {
+                //~ "key": k, "value": str
+            //~ });
+        //~ }
+    //~ });
+    //~ if (callback) {
+        //~ operation
+        //~ .then(callback)
+        //~ .catch(callback);
+    //~ }
+//~ }
+
+
+//~ // ok
+//~ const loadValues = function() {
+    //~ let stored = JSON.parse(localStorage['val_'] || '{}');
+    //~ assignCarefully(val_, stored);
+    //~ prepareTask();
+    //~ if (vk_user_id) {
+        //~ drawTable();
+        //~ fetchCompanionPositions();
+    //~ }
+    //~ vkBridge.send("VKWebAppStorageGet", {"keys": Object.keys(val_)})
+    //~ .then(data => {
+        //~ stored = {};
+        //~ data.keys.forEach(obj => {
+            //~ try {
+                //~ stored[obj.key] = JSON.parse(obj.value);
+                //~ console.log('Got %s from vk storage', obj.key);
+            //~ } catch {
+                //~ console.warn('Invalid vk storage obj', obj);
+            //~ }
+        //~ });
+        //~ if (assignCarefully(val_, stored)) {
+            //~ console.log('Users data updated from VKWebAppStorage');
+            //~ localStorage['val_'] = JSON.stringify(val_);
+            //~ prepareTask();
+            //~ drawTable();
+            //~ fetchCompanionPositions();
+        //~ }
+    //~ })
+    //~ .catch(error => {});
+//~ }
+
+
