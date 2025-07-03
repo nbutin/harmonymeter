@@ -171,6 +171,10 @@ color: var(--contrasty-orange);
 border-radius: .5rem;
 }
 
+li.green-marked, li.orange-marked, li.red-marked, li.purple-marked, li.blue-marked {
+border-radius: 0px;
+}
+
 
 html,
 body,
@@ -416,10 +420,10 @@ width:calc(100% + 1em);
 margin:-0.5em;
 }
 
-.grid tr.hidden {display: table-row;}
-.grid tr.hidden td * {display: none;}
-table.grid:has(tr.hidden:first-child) {margin-top: -1.5em;}
-table.grid:has(tr.hidden:last-child) {margin-bottom: -1.5em;}
+.grid tr.null {display: table-row;}
+.grid tr.null td * {display: none;}
+table.grid:has(tr.null:first-child) {margin-top: -1.5em;}
+table.grid:has(tr.null:last-child) {margin-bottom: -1.5em;}
 
 .grid:has(td:nth-child(2)) td {
 width:calc(100% / 2);
@@ -471,3 +475,71 @@ display: none;
 body.-vk .-vk {
 display: unset;
 }
+
+
+
+
+
+b.badge {
+float: left;
+width: 100%;
+font-size:2rem;
+font-family:var(--mono-font);
+}
+
+b.badge, b.badge :is(b, u, a) {
+display: flex;
+aspect-ratio: 1;
+border-radius: .5rem;
+}
+
+b.badge a {
+width:80%;
+margin:auto;
+border-radius:100%;
+background-size: calc(100% + 2px);
+background-position: center;
+position: relative;
+}
+
+b.badge a:first-child {
+margin: auto -40%;
+z-index: 0;
+left: 50%;
+background: none;
+border: none;
+}
+
+b.badge u {
+width: calc(100% - 4px);
+margin: auto;
+border: 2px dotted var(--softer-thing);
+}
+
+b.badge i {
+margin:auto;
+}
+
+b.badge, b.badge a {
+border: 1px solid var(--soft-thing);
+}
+
+b.badge, b.badge a:first-of-type {
+background: var(--softest-thing);
+text-decoration: underline;
+}
+
+b.badge a b {
+border-radius: 100%;
+margin: -1px;
+}
+
+b.badge.sepia b {
+backdrop-filter: sepia();
+}
+
+b.badge.grayscale :is(b, i) {
+backdrop-filter: grayscale();
+}
+
+

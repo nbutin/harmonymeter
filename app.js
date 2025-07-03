@@ -1,28 +1,34 @@
-const app_initial_characters = [...characters];
-var app_selected_character = 1;
+window.prop_profiles = [...characters];
+window.prop_selected = 1;
+//~ var app_selected_character = 1;
 
 
-window.leap_triggers = {
-    '^-main(-.*)?$': buildMap,
-    '^-select$': buildSelector,
-    '^-diagnosis-\\d+$': buildDiagnosis,
-    '^-spec-p-\\d+$': buildSpec,
-    '^-edit(-.*)?$': prepareEditForm,
-    '^-test-s-\\d+$': prepareTestS,
-    '^-test-p-\\d+$': prepareTestP,
+window.embodying_triggers = {
+    '^-main(-.*)?$': embodyMain,
+    '^-select$': embodySelect,
+    '^-matching-\\d+$': embodyMatching,
+    '^-spec-p-\\d+$': embodySpec,
+    '^-edit(-.*)?$': embodyEdit,
+    '^-test-s-': embodyTestS,
+    '^-test-p-': embodyTestP,
+};
+
+window.prop_stored = {
+    prop_profiles: [],
+    //~ 'image-12': '',
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     prepareSelectors();
-    loadValues();
-    engageTriggers();
-    buildMap();
+    appLoadProps();
+    //~ engageTriggers();
+    //~ embodyMain();
     vkInit();
 });
 
 function calcSocRating(type_id) {
-    if (type_id < 0 || characters[app_selected_character][1] < 0) return [-1, -1, []];
-    const selected = soc_types[characters[app_selected_character][1]];
+    if (type_id < 0 || window.prop_profiles[window.prop_selected][1] < 0) return [-1, -1, []];
+    const selected = soc_types[window.prop_profiles[window.prop_selected][1]];
     const tested = soc_types[type_id];
     var n1 = 0;
     var r = 0;
@@ -65,8 +71,8 @@ function calcSocRating(type_id) {
 }
 
 function calcPsyRating(type_id) {
-    if (type_id < 0 || characters[app_selected_character][2] < 0) return [-1, -1, []];
-    const selected = psy_types[characters[app_selected_character][2]];
+    if (type_id < 0 || window.prop_profiles[window.prop_selected][2] < 0) return [-1, -1, []];
+    const selected = psy_types[window.prop_profiles[window.prop_selected][2]];
     const tested = psy_types[type_id];
     var n1 = 0;
     var r = 0;
@@ -94,8 +100,8 @@ function calcPsyRating(type_id) {
 }
 
 function calcRating(profile_id) {
-    const soc_rating = calcSocRating(characters[profile_id][1]);
-    const psy_rating = calcPsyRating(characters[profile_id][2]);
+    const soc_rating = calcSocRating(window.prop_profiles[profile_id][1]);
+    const psy_rating = calcPsyRating(window.prop_profiles[profile_id][2]);
     const min_rating = parseInt((
         parseInt(soc_rating[0] >= 0 && `${soc_rating[0]}` || 0) +
         parseInt(psy_rating[0] >= 0 && `${psy_rating[0]}` || 0)
@@ -118,111 +124,98 @@ function sumRating(numbers) {
 }
 
 
+// ok
 function calcAllRatings() {
     var map = [];
-    for (let i = 0; i < characters.length; i++) {
-        if (`${characters[app_selected_character]}` != `${characters[i]}`) {
+    window.prop_profiles.forEach((val, i) => {
+        if (val && window.prop_selected != i) {
             map.push(calcRating(i));
         }
-    }
+    });
     return map.sort((a, b) => sumRating(b) - sumRating(a));
 }
 
-
-function buildMap() {
-    const first = calcRating(app_selected_character);
+// ok
+function embodyMain() {
+    const first = calcRating(window.prop_selected);
     const empty = [-1, -1, -1, -1, [], []];
     var items = [first, ...calcAllRatings(), empty, empty, empty, empty, empty];
     items = items.slice(0, (-items.length % 4) || -4);
     var html = '';
-    for (let x = 0; x < items.length; x++) {
-        const i = items[x];
-        const profile = characters[i[6]];
-        let sr = `soc${percentToText(i[4][0], i[4][1])}`;
-        let pr = `psy${percentToText(i[5][0], i[5][1])}`;
-        let f1 = '';
-        try {
-            f1 = psy_types[profile[2]][0].slice(0, 1);
-        } catch {
-            f1 = 'В';
+    items.forEach((v, i) => {
+        const profile = window.prop_profiles[v[6]];
+        let sr = `soc${percentToText(v[4][0], v[4][1])}`;
+        let pr = `psy${percentToText(v[5][0], v[5][1])}`;
+        if (profile && profile[2] in psy_types) {
+            var f1 = psy_types[profile[2]][0].slice(0, 1);
+            var f2 = psy_types[profile[2]][0].slice(1, 2);
+        } else {
+            var f1 = 'В';
+            var f2 = 'Э';
         }
         f1 = {'Ф': 'P1', 'В': 'V1', 'Э': 'E1', 'Л': 'L1'}[f1];
-        let f2 = '';
-        try {
-            f2 = psy_types[profile[2]][0].slice(1, 2);
-        } catch {
-            f2 = 'Э';
-        }
         f2 = {'Ф': 'P2', 'В': 'V2', 'Э': 'E2', 'Л': 'L2'}[f2];
-        let ie = '';
-        try {
+        if (profile && profile[1] in psy_types) {
             let x = soc_types[profile[1]][2].slice(0, 1);
-            if (x == x.toLowerCase()) ie = 'sI';
-            else throw new Error();
-        } catch {
-            ie = 'sE';
+            if (x == x.toLowerCase()) var ie = 'sI';
+            else var ie = 'sE';
+            x = soc_types[profile[1]][0].slice(0, 1);
+            if ('ис'.includes(x.toLowerCase())) var jp = 'sP';
+            else var jp = 'sJ';
+        } else {
+            var ie = 'sE';
+            var jp = 'sJ';
         }
-        let jp = '';
-        try {
-            let x = soc_types[profile[1]][0].slice(0, 1);
-            if ('ис'.includes(x.toLowerCase())) jp = 'sP';
-            else throw new Error();
-        } catch {
-            jp = 'sJ';
-        }
-        var url = getImageUrl(i[6]);
-        var href = `-diagnosis-${i[6]}`;
-        if (x == 0) href = '-select';
-        else if (i[6] === undefined) href = '-edit-';
-        else if (i[6] === 0 && (profile[1] + profile[2]) > -2) href = '-diagnosis-0';
-        else if (i[6] === 0) href = '-edit-0';
-        var flag = '';
-        if (!x || i[6] === undefined) flag = 'special';
-        var name = getAbbr(i[6]);
-        html += `
-<div class="item ${sr} ${pr} ${f1} ${f2} ${ie} ${jp} ${flag}">
-    <div>
-        <p>
-            <a onclick="location.hash = '${href}'" style="background-image:url(${url})"><i><b>${(!url && name) || (!url && '?') || ''}</b></i></a>
-        </p>
-    </div>
-</div>
-`;
-    }
+        var url = appStoredImage(v[6]);
+        var href = `-matching-${v[6]}`;
+        if (i == 0) href = '-select';
+        else if (v[6] === undefined) href = '-edit-';
+        else if (v[6] === 0 && (profile[1] + profile[2]) > -2) href = '-matching-0';
+        else if (v[6] === 0) href = '-edit-0';
+        if (!i || v[6] === undefined) var flag = 'sepia';
+        else var flag = '';
+        html += appBadge(v[6], [sr, pr, f1, f2, ie, jp, flag]).replace('onclick=""', `onclick="location.hash = '${href}'"`);
+    });
     document.getElementById('map').innerHTML = html;
     return html;
 }
 
-function buildSelector() {
-    var items = [0, ...Object.keys(characters).slice(1).reverse()];
+
+// ok
+function embodySelect() {
+    var items = [0, ...Object.keys(window.prop_profiles).slice(1).reverse()];
     var html = '';
-    items.forEach(i => {
-        let url = getImageUrl(i);
-        if (url) var image = `<img src="${url}" />`;
-        else var image = `<b>${getAbbr(i)}</b>`;
-        let selected = (app_selected_character == i) && 'selected' || '';
-        html += `<i class="${selected}"><a onclick="app_selected_character = ${i}; location.hash = '-main'">${image}</a></i>`;
+    items.filter(x => ![null].includes(window.prop_profiles[x])).forEach(i => {
+        let url = appStoredImage(i);
+        html += coreBadge(url, window.prop_profiles[i][0], `window.prop_selected = ${i}; location.hash = '-main'`);
     });
-    if (items.length % 4) html += `<i style="width: calc(100% * ${4 - items.length % 4} / 4); aspect-ratio:${4 - items.length % 4}"></i>`;
+    if (items.length % 4) html += `<b class="badge" style="width: calc(100% * ${4 - items.length % 4} / 4); aspect-ratio:${4 - items.length % 4}"></b>`;
     document.getElementById('selector').innerHTML = html;
 }
 
-function getImageUrl(character_id) {
-    if (character_id && '1 2 3 4 5 6 7 8 9'.includes(character_id)) {
-        return `images/${character_id}.jpg`;
-    } else {
-        return localStorage[`image-${character_id}`];
+
+// ok
+function appStoredImage(profile_id) {
+    return coreStoredImage(profile_id)
+        || ('1 2 3 4 5 6 7 8 9'.includes(parseInt(profile_id))
+        && `images/${profile_id}.jpg`) || '';
+}
+
+
+
+// ok
+function appBadge(profile_id, modifiers) {
+    const image = appStoredImage(profile_id);
+    var label = '';
+    if (window.prop_profiles[profile_id]) {
+        label = coreAcronym(window.prop_profiles[profile_id][0]);
     }
-}
-
-function getAbbr(character_id, name) {
-    var name = (name && [name] || characters[character_id] || [''])[0].split(' ');
-    var abbr = '';
-    if (name.length > 1) name.forEach(i => {abbr += i[0].toUpperCase()});
-    return (abbr || name[0]).slice(0, 3);
+    const featured = modifiers && true || false;
+    return coreBadge(image, label, null, featured, modifiers);
 }
 
 
+// ok
 function percentToText(n1, n2) {
     if (n1 < 0 || n2 - n1 > 50) return 'none';
     else if (n1 >= 80) return 'best';
@@ -232,6 +225,8 @@ function percentToText(n1, n2) {
     else return 'sick';
 }
 
+
+// ok
 function getColorMark(text) {
     var result = '';
     Object.entries(marks).some(i => {
@@ -243,6 +238,8 @@ function getColorMark(text) {
     return result;
 }
 
+
+// ok
 function formatRatingDetails(items) {
     var html = '';
     items.forEach(i => {
@@ -251,11 +248,13 @@ function formatRatingDetails(items) {
     return html && html.slice(0, -6) + '.</li>' || '';
 }
 
-function buildDiagnosis() {
-    const id1 = app_selected_character;
-    const id2 = parseInt(location.hash.split('-').slice(-1)[0]);
-    const tested = characters[id2];
-    const selected = characters[id1];
+
+// ok
+function embodyMatching() {
+    const id1 = window.prop_selected;
+    const selected = window.prop_profiles[id1];
+    const matched = appGetProfileByHash();
+    const id2 = matched[9];
     if (id1 == 0) link1e = '-edit-0';
     else if ([1,2,3,4,5,6,7,8,9].includes(id1)) link1e = `-edit-r-${id1}`;
     else link1e = `-edit-w-${id1}`;
@@ -263,15 +262,13 @@ function buildDiagnosis() {
     else if ([1,2,3,4,5,6,7,8,9].includes(id2)) link2e = `-edit-r-${id2}`;
     else link2e = `-edit-w-${id2}`;
     var link1s = `-spec-s-${selected[1]}`;
-    var link2s = `-spec-s-${tested[1]}`;
+    var link2s = `-spec-s-${matched[1]}`;
     var link1p = `-spec-p-${selected[2]}`;
-    var link2p = `-spec-p-${tested[2]}`;
-    var url1 = getImageUrl(id1);
-    var url2 = getImageUrl(id2); ///////////////////////////////
-    if (url1) var image1 = `<img src="${url1}" onclick="location.hash = '${link1e}'" />`;
-    else var image1 = `<a onclick="location.hash = '${link1e}'"><b>${getAbbr(id1)}</b></a>`;
-    if (url2) var image2 = `<img src="${url2}" onclick="location.hash = '${link2e}'" />`;
-    else var image2 = `<a onclick="location.hash = '${link2e}'"><b>${getAbbr(id2)}</b></a>`;
+    var link2p = `-spec-p-${matched[2]}`;
+    var url1 = appStoredImage(id1);
+    var url2 = appStoredImage(id2);
+    var badge1 = coreBadge(url1, selected[0], `location.hash = '${link1e}'`);
+    var badge2 = coreBadge(url2, matched[0], `location.hash = '${link2e}'`);
     const rating = calcRating(id2);
     if (rating[0] == rating[1]) var sum_percent = rating[0];
     else var sum_percent = `от ${rating[0]} до ${rating[1]}`;
@@ -287,12 +284,8 @@ function buildDiagnosis() {
     document.getElementById('sum-percent').innerText = sum_percent;
     var html = `
         <tr class="${sum_rating}">
-            <td>
-                <i>${image1}</i>
-            </td>
-            <td>
-                <i>${image2}</i>
-            </td>
+            <td>${badge1}</td>
+            <td>${badge2}</td>
         </tr>
         <tr>
             <td colspan="2">
@@ -304,7 +297,7 @@ function buildDiagnosis() {
                 <div><button onclick="location.hash = '${selected[1] >= 0 && link1s || link1e}'">${selected[1] >= 0 && soc_types[selected[1]][1] || '&nbsp; ? &nbsp;'}</button></div>
             </td>
             <td>
-                <div><button onclick="location.hash = '${tested[1] >= 0 && link2s || link2e}'">${tested[1] >= 0 && soc_types[tested[1]][1] || '&nbsp; ? &nbsp;'}</button></div>
+                <div><button onclick="location.hash = '${matched[1] >= 0 && link2s || link2e}'">${matched[1] >= 0 && soc_types[matched[1]][1] || '&nbsp; ? &nbsp;'}</button></div>
             </td>
         </tr>
         <tr>
@@ -324,7 +317,7 @@ function buildDiagnosis() {
                 <div><button onclick="location.hash = '${selected[2] >= 0 && link1p || link1e}'">${selected[2] >= 0 && psy_types[selected[2]][1] || '&nbsp; ? &nbsp;'}</button></div>
             </td>
             <td>
-                <div><button onclick="location.hash = '${tested[2] >= 0 && link2p || link2e}'">${tested[2] >= 0 && psy_types[tested[2]][1] || '&nbsp; ? &nbsp;'}</button></div>
+                <div><button onclick="location.hash = '${matched[2] >= 0 && link2p || link2e}'">${matched[2] >= 0 && psy_types[matched[2]][1] || '&nbsp; ? &nbsp;'}</button></div>
             </td>
         </tr>
         <tr>
@@ -343,11 +336,12 @@ function buildDiagnosis() {
             </td>
         </tr>
     `;
-    document.querySelector('#diagnosis table').innerHTML = html;
+    document.querySelector('#matching table').innerHTML = html;
 }
 
 
-function buildSpec(type_id) {
+// ok
+function embodySpec(type_id) {
     var type = psy_types[type_id || location.hash.split('-').slice(-1)[0]];
     document.querySelector('.-spec-p h3').innerText = `${type[1]} (${type[0]})`;
     document.querySelectorAll('.-spec-p strong').forEach((node, i) => {
@@ -356,129 +350,178 @@ function buildSpec(type_id) {
 }
 
 
-function prepareEditForm() {
-    console.log(22222, window.accepted_p);
-    function fromTestOr(s_or_p, id, v) {
-        try {
-            return window[`accepted_${s_or_p}`][0] == id && window[`accepted_${s_or_p}`][1] || v
-        } catch {
-            return v
-        }
+// ok
+function appGetProfileByHash() {
+    const profile_id = parseInt(location.hash.split('-').slice(-1)[0]);
+    const profile = [...(window.prop_profiles[profile_id] || ['', -1, -1])];
+    profile[9] = profile_id;
+    return profile;
+}
+
+
+// 
+function fromCacheOrProfile(index) {
+    const profile = appGetProfileByHash();
+    const cached = appCachedProfileValue(index);
+    if (index == 8) {
+        return cached || coreStoredImage(profile[9]) || `images/${profile[9]}.jpg`;
+    } else {
+        return cached || profile[index];
     }
-    var profile_id = parseInt(location.hash.split('-').slice(-1)[0]);
-    const profile = characters[profile_id];
-    //~ const headers = document.querySelectorAll('.-edit.header h2');
-    const [input_id, input_file, input_name, soc_selector, psy_selector] = document.querySelectorAll('.-edit input, .-edit select');
+}
+
+
+// ok
+function appCachedProfileValue(i, value) {
+    if (!window._cached_ || [undefined].includes(i)) {
+        window._cached_ = [];
+    }
+    if (value !== undefined) {
+        window._cached_[i] = value;
+    } else {
+        return window._cached_[i];
+    }
+}
+
+// ok
+function embodyEdit() {
+    if (core_history_of_embodyings[1].slice(0, 6) != '-test-') {
+        appCachedProfileValue();
+    }
+    const profile = appGetProfileByHash();
+    const [input_name, soc_selector, psy_selector] = document.querySelectorAll('.-edit input[name="name"], .-edit select');
     const [soc_hint, psy_hint] = document.querySelectorAll('.-edit.hint div');
+    const image = document.querySelector('.-edit :has(>b.badge)');
     const button = document.querySelector('.-edit button');
-    const image = document.getElementById('userpic');
-    //~ headers.forEach(node => {node.classList.add('hidden')});
     input_name.disabled = false;
     soc_selector.disabled = false;
     psy_selector.disabled = false;
     soc_hint.innerHTML = '';
     psy_hint.innerHTML = '';
-    button.disabled = true;
-    if (!profile) {
-        input_id.value = '';
-        //~ headers[1].classList.remove('hidden');
-        input_name.value = '';
-        
-        soc_selector.value = fromTestOr('s', profile_id, -1);
-        changedProfile(0, soc_selector.value);
-        psy_selector.value = fromTestOr('p', profile_id, -1);
-        changedProfile(1, psy_selector.value);
-        image.innerHTML = `<i><b>?</b></i>`;
-    } else {
-        input_id.value = profile_id;
-        input_name.value = profile[0];
-        soc_selector.value = fromTestOr('s', profile_id, profile[1]);
-        changedProfile(0, soc_selector.value);
-        psy_selector.value = fromTestOr('p', profile_id, profile[2]);
-        changedProfile(1, psy_selector.value);
-        image_url = getImageUrl(profile_id);
-        if (image_url) image.innerHTML = `<img src="${image_url}" />`;
-        else image.innerHTML = `<i><b>${getAbbr(profile_id)}</b></i>`;
-        if (profile[1] >= 0) {
-            soc_hint.innerHTML = document.querySelector(`.-spec-s-${profile[1]}`).innerHTML;
-        }
-        if (profile[2] >= 0) {
-            buildSpec(profile[2]);
-            psy_hint.innerHTML = document.querySelector('.-spec-p:not(.header)').innerHTML;
-        }
-        if (profile_id === 0) {
-            //~ headers[0].classList.remove('hidden');
-            input_name.disabled = true;
-        } else if ('1 2 3 4 5 6 7 8 9'.includes(profile_id)) {
-            //~ headers[2].classList.remove('hidden');
-            input_name.disabled = true;
-            soc_selector.disabled = true;
-            psy_selector.disabled = true;
-        } else {
-            //~ headers[3].classList.remove('hidden');
-        }
+    input_name.value = fromCacheOrProfile(0);
+    soc_selector.value = fromCacheOrProfile(1);
+    changedProfile(soc_selector.name, soc_selector.value);
+    psy_selector.value = fromCacheOrProfile(2);
+    changedProfile(psy_selector.name, psy_selector.value);
+    image.innerHTML = coreBadge(fromCacheOrProfile(8), input_name.value);
+    if (profile[9] === 0) {
+        input_name.disabled = true;
+    } else if ('1 2 3 4 5 6 7 8 9'.includes(profile[9])) {
+        //~ input_name.disabled = true;
+        soc_selector.disabled = true;
+        psy_selector.disabled = true;
     }
+    button.innerText = 'Сохранить'
+    button.disabled = true;
 }
 
+
+// ok
 function prepareSelectors() {
     const [soc_selector, psy_selector] = document.querySelectorAll('.-edit select');
-    var items = ['<option value="-1">Социотип ( ? )</option>', '<option value="test">Определить с помощью теста...</option>'];
+    var items = [
+        '<option value="-1">Социотип ( ? )</option>', 
+        '<option value="test">Определить с помощью теста...</option>',
+    ];
     soc_types.forEach((v, i) => {
         items.push(`<option value="${i}">${v[0]}, ${v[1]}</option>`);
     });
     soc_selector.innerHTML = items.join('\n');
-    items = ['<option value="-1">Психотип ( ? )</option>', '<option value="test">Определить с помощью теста...</option>'];
+    items = [
+        '<option value="-1">Психотип ( ? )</option>',
+        '<option value="test">Определить с помощью теста...</option>',
+    ];
     psy_types.forEach((v, i) => {
         items.push(`<option value="${i}">${v[0]}, ${v[1]}</option>`);
     });
     psy_selector.innerHTML = items.join('\n');
 }
 
-function changedProfile(i, value) {
-    if (value == 'test') test(i);
+
+// ok
+function changedProfile(name, value) {
+    name = name || event.target.name;
+    value = value || event.target.value;
+    const profile = appGetProfileByHash();
+    const edited = getEditedProfileValues();
+    const button = document.querySelector('.-edit button');
+    if (name != 'name' && value == 'test') {
+        console.log(11111111, window._cached_);
+        //~ let id = ![NaN].includes(profile[9]) && profile[9] || '';
+        location.hash = `${name}-${profile[9]}`;
+        return;
+    }
+    if (name == 'name' && value == '-reset') {
+        localStorage.clear();
+        location.hash = '';
+        location.reload();
+        return;
+    }
     setTimeout(() => {
-        document.querySelector('.-edit button').disabled = false;
-        const image = document.getElementById('userpic');
+        if ((profile[0] || edited[0]) && edited.toString() != profile.toString()) {
+            button.disabled = false;
+        } else {
+            button.disabled = true;
+        }
         const hints = document.querySelectorAll('.-edit.hint div');
-        const profile_id = location.hash.split('-').slice(-1)[0];
-        const image_url = getImageUrl(profile_id);
-        if (i == 2) {
-            if (!image_url) image.innerHTML = `<i>${getAbbr(-1, value)}</i>`;
-            return;
-        } else if (i == 0) {
+        if (name == 'name') {
+            if (!value && profile[0]) button.innerText = 'Удалить';
+            else button.innerText = 'Сохранить';
+            let image = document.querySelector('.-edit :has(>b.badge)');
+            let image_url = image.querySelector('a[style]').style.backgroundImage.slice(5, -2);
+            //~ image.innerHTML = coreBadge(image_url || getAbbr(-1, value));
+            image.innerHTML = coreBadge(image_url, value);
+            appCachedProfileValue(0, value);
+        } else if (name.split('-').slice(-1)[0] == 's') {
             if (parseInt(value) >= 0) {
-                hints[i].innerHTML = document.querySelector(`.-spec-s-${value}`).innerHTML;
+                hints[0].innerHTML = document.querySelector(`.-spec-s-${value}`).innerHTML;
             } else {
-                hints[i].innerHTML = '';
+                hints[0].innerHTML = '';
             }
-        } else if (i == 1) {
+        } else if (name.split('-').slice(-1)[0] == 'p') {
             if (parseInt(value) >= 0) {
-                buildSpec(value);
-                hints[i].innerHTML = document.querySelector('.-spec-p:not(.header)').innerHTML;
+                embodySpec(value);
+                hints[1].innerHTML = document.querySelector('.-spec-p:not(.header)').innerHTML;
             } else {
-                hints[i].innerHTML = '';
+                hints[1].innerHTML = '';
             }
         }
     }, 1);
 }
 
-function saveProfile() {
-    const [input_id, input_file, input_name, soc_selector, psy_selector] = document.querySelectorAll('.-edit input, .-edit select');
-    const value = [input_name.value.slice(0, 23).trim(), parseInt(soc_selector.value), parseInt(psy_selector.value)];
-    if (input_id.value === '') {
-        characters.push(value);
-    } else if (input_name.value.trim() === '') {
-        characters[input_id.value] = [];
-    } else {
-        characters[input_id.value] = value;
-    }
-    toStorage('characters', characters);
+
+// 
+function getEditedProfileValues() {
+    const [input_name, soc_selector, psy_selector] = document.querySelectorAll('.-edit input[name="name"], .-edit select');
+    const values = [input_name.value, parseInt(soc_selector.value), parseInt(psy_selector.value)];
+    values[9] = appGetProfileByHash()[9];
+    return values;
 }
 
-function fromStorage(key) {
-    let val = JSON.parse(localStorage[key] || '""');
-    return val;
+
+// ok
+function saveProfile() {
+    const values = getEditedProfileValues();
+    if ([NaN].includes(values[9])) {
+        coreStoredImage(window.prop_profiles.length, appCachedProfileValue(8));
+        window.prop_profiles.push(values.slice(0, 3));
+        history.back();
+    } else if (!values[0]) {
+        window.prop_profiles[values[9]] = null;
+        while (window.prop_profiles.length > 10 && !window.prop_profiles.slice(-1)[0]) {
+            window.prop_profiles.pop();
+        }
+        coreStoredImage(values[9], null);
+        location.hash = '-main';
+    } else {
+        window.prop_profiles[values[9]] = values.slice(0, 3);
+        coreStoredImage(values[9], appCachedProfileValue(8));
+        history.back();
+    }
+    appSaveProps('prop_profiles');
 }
+
+
 
 function toStorage(key, val) {
     localStorage[key] = JSON.stringify(val);
@@ -488,26 +531,158 @@ function selectFile() {
     document.getElementById('uploaded').click();
 }
 
-function loadValues() {
-    var stored = fromStorage('characters');
-    (typeof(stored) == 'object' && stored.length && stored || []).forEach((v, i) => {
-        if (!'1 2 3 4 5 6 7 8 9'.includes(i)) {
-            characters[i] = v;
+function listStoredProps() {
+    return {prop_version: 0, prop_stored: {}, ...(window.prop_stored  || {})};
+}
+
+
+function updateProps(props) {
+    const actual_version = window.prop_version;
+    if (!props.prop_version || props.prop_version <= actual_version) {
+        if (!window.prop_version) {
+            window.prop_version = 1;
+            console.log(`embodied with initial props`)
+            embody();
+        } else {
+            console.log(`actual version of props - ${actual_version}, loaded version - ${props.prop_version}`)
+        }
+        return;
+    }
+    if (props.prop_stored && typeof(window.prop_stored) == typeof(props.prop_stored) && props.prop_stored.toString() == "[object Object]") {
+        window.prop_stored = props.prop_stored;
+    }
+    for (let name in props) {
+        if (name in window.prop_stored && typeof(window.prop_stored[name]) == typeof(props[name])) {
+            if (typeof(props[name]) == 'object' && props[name]) {
+                if (!window[name] && Object.entries(props[name]).length) {
+                    window[name] = props[name];
+                } else {
+                    for (let k in props[name]) {
+                        window[name][k] = props[name][k];
+                    }
+                }
+            } else if (props[name] && props[name] != window.prop_stored[name]) {
+                window[name] = props[name];
+            }
+        }
+    }
+    window.prop_version = props.prop_version;
+    console.log(`props version updated from '${actual_version}' to ${window.prop_version}`)
+    embody();
+}
+
+
+// ok
+function applyImage() {
+    const url = URL.createObjectURL(document.getElementById('uploaded').files[0]);
+    compressImage(url, data => {
+        appCachedProfileValue(9, appGetProfileByHash()[9]);
+        appCachedProfileValue(8, data);
+        const image = document.querySelector('.-edit .badge a[style]');
+        image.style.backgroundImage = `url('${data}')`;
+        const input_name = document.querySelector('.-edit input[name="name"]');
+        if (input_name.value) {
+            const button = document.querySelector('.-edit button');
+            button.disabled = false;
         }
     });
 }
 
-function switchHome() {
+
+// ok
+function compressImage(url, callback) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 240;
+    canvas.height = 240;
+    const ctx = canvas.getContext('2d');
+    const img = new Image;
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0, 240, 240);
+        [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1].some(x => {
+            let result = canvas.toDataURL('image/jpeg', x);
+            if (result.length <= 50 * 1024) {
+                callback(result);
+                return true;
+            }
+        });
+    }
+    img.src = url;
+}
+
+
+
+function coreStoredImage(id, data) {
+    const name = `image-${id}`;
+    if (data === undefined) {
+        return window[name];
+    } else if (data === null) {
+        delete window[name];
+        delete window.prop_stored[name];
+        appSaveProps([name, 'prop_stored']);
+    } else {
+        window[name] = data;
+        window.prop_stored[name] = '';
+        appSaveProps([name, 'prop_stored']);
+    }
+}
+
+
+
+function appLoadProps() {
+    _loadPropsLocal();
+    //~ _loadPropsVk();
+    //~ _loadPropsTg();
+}
+
+function appSaveProps(list, locally) {
+    window.prop_version += 1;
+    list = typeof(list) == 'object' && list.length && ['prop_version', ...list]
+        || typeof(list) == 'string' && ['prop_version', list]
+        || Object.keys(listStoredProps()).filter(name => name.slice(0, 5) == 'prop_');
+    _savePropsLocal(list);
+    if (!locally) {
+        //~ _savePropsVk();
+        //~ _savePropsTg();
+    }
+}
+
+function _loadPropsLocal() {
+    const props = {};
+    const prop_stored = JSON.parse(localStorage['prop_stored'] || 'null');
+    for (name in Object.assign(listStoredProps(), prop_stored)) {
+        if (!['undefined', 'NaN'].includes(localStorage[name])) {
+            props[name] = JSON.parse(localStorage[name] || 'null');
+        }
+    }
+    updateProps(props);
+}
+
+function _savePropsLocal(list) {
+    list.forEach(name => {
+        if ([undefined, null].includes(window[name])) {
+            delete localStorage[name];
+            console.log(`${name} deleted`);
+        } else {
+            localStorage[name] = JSON.stringify(window[name]);
+            console.log(`${name} stored locally`);
+        }
+    });
+}
+
+function altMain() {
     if (location.hash == '#-main') location.hash = '-select';
     else location.hash = '-main';
 }
 
-function test(v) {
-    location.hash = `-test-${v && 'p' || 's'}-${location.hash.split('-').slice(-1)[0]}`;
-}
+//~ function test(v) {
+    //~ location.hash = `-test-${v && 'p' || 's'}-${location.hash.split('-').slice(-1)[0]}`;
+//~ }
 
-function prepareTestS() {
-    window.accepted_s = [];
+
+// ok
+function embodyTestS() {
+    //~ const profile = appGetProfileByHash();
+    //~ const profile_id = parseInt(location.hash.split('-').slice(-1)[0]);
     document.querySelector('.-test-s button:first-of-type').disabled = true;
     document.querySelectorAll('.-test-s input[type="radio"]').forEach(node => {
         node.checked = false;
@@ -529,19 +704,22 @@ function checkTestS() {
 }
 
 
+// ok
 function acceptTestS() {
     const form = document.querySelector('.-test-s form');
     const type_code = `${form.EI.value}${form.NS.value}${form.TF.value}${form.JP.value}`;
-    const tested_id = parseInt(location.hash.split('-').slice(-1)[0]);
+    appCachedProfileValue(9, appGetProfileByHash()[9]);
+    //~ const tested_id = parseInt(location.hash.split('-').slice(-1)[0]);
+    //~ window._cached_[9] = tested_id;
     soc_types.forEach((v, i) => {
-        if (v[3] == type_code) window.accepted_s = [tested_id, i];
+        if (v[3] == type_code) appCachedProfileValue(1, i); // window._cached_[1] = i;
     });
     history.back();
 }
 
 
-function prepareTestP() {
-    window.accepted_p = [];
+function embodyTestP() {
+    //~ const profile_id = parseInt(location.hash.split('-').slice(-1)[0]);
     const units = document.getElementsByClassName('-test-p');
     units[2].querySelector('button').disabled = true;
     units[1].querySelectorAll('input[type="radio"]').forEach(node => {
@@ -563,7 +741,7 @@ function checkTestP(step) {
     const [form1, form2, form3] = units[1].querySelectorAll('form p');
     const checked = form1.querySelectorAll('input[data-checked]');
     if (event.target.parentNode.parentNode.childElementCount == 4 && checked.length > 1) {
-        prepareTestP();
+        embodyTestP();
     }
     event.target.checked = true;
     event.target.dataset.checked = true;
@@ -597,6 +775,8 @@ function checkTestP(step) {
     }
 }
 
+
+// ok
 function acceptTestP() {
     const [f13, f24] = document.querySelectorAll('.-test-p form:not(:first-of-type)');
     const f1 = f13.querySelector('[data-checked]');
@@ -604,9 +784,11 @@ function acceptTestP() {
     const f2 = f24.querySelector('[data-checked]');
     const f4 = f24.querySelector('input:not([data-checked])');
     const type_code = `${f1.value}${f2.value}${f3.value}${f4.value}`;
-    const tested_id = parseInt(location.hash.split('-').slice(-1)[0]);
+    //~ const tested_id = parseInt(location.hash.split('-').slice(-1)[0]);
+    //~ window._cached_[9] = tested_id;
+    appCachedProfileValue(9, appGetProfileByHash()[9]);
     psy_types.forEach((v, i) => {
-        if (v[0] == type_code) window.accepted_p = [tested_id, i];
+        if (v[0] == type_code) appCachedProfileValue(2, i); // window._cached_[2] = i;
     });
     history.back();
 }
@@ -620,4 +802,25 @@ function visit(name) {
         'lifetuner': 'https://vk.com/progressinator',
     }
     window.open(map[name || 'default']);
+}
+
+function share() {
+    //replace with opening an external link to the corresponding post
+    var theme = 'story-theme';
+    sticker = 'sticker';
+    vkBridge.send('VKWebAppShowStoryBox', {
+        "background_type": "image",
+        "url": 'story.png',
+        "locked": true,
+    })
+    .then(data => {
+        is_shared = true;
+    })
+    .catch(error => {
+        console.log(error);
+    });
+}
+
+function setup() {
+    
 }

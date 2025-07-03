@@ -10,14 +10,14 @@ h1.app-title{width: 100%;
   position: absolute;
   margin: auto;
   left: 0;}
-h1.app-title img{width:200px;}
+h1.app-title img{width:180px;}
 
 html{
 overflow:auto;
 user-select:none;
-background:black repeating-linear-gradient(-69deg, #000, #2e2920 50%, #2e2920 50%, #000) top center;
+sbackground:black repeating-linear-gradient(-69deg, #000, #2e2920 50%, #2e2920 50%, #000) top center;
 background-size:9px 9px;
-background:black url(bg.jpg) top center;
+background:#70634d url(bg.jpg) top center;
 background-size:160px;
 padding:72px 0px 24px;
 }
@@ -31,6 +31,56 @@ padding:72px 0px 24px;
 }
 
 .block, .block:not(:last-child){max-width:360px; margin:0px auto;}
+
+.-main b.badge {
+}
+/*
+repeating-linear-gradient(var(--angle1), transparent, transparent 25%, var(--softest-thing) 50%, var(--softest-space) 50%, transparent 75%, transparent),
+repeating-linear-gradient(var(--angle1), var(--color1), var(--color1) 50%, var(--color2) 50%, var(--color2));
+
+background:repeating-linear-gradient(transparent), var(--pattern); 
+*/
+
+.-select .badge {
+width: 25%;
+border: 1px solid var(--bolder-thing);
+background: none;
+}
+
+.-main .badge {
+width: 25%;
+background:
+    repeating-linear-gradient(var(--gradient3)),
+    repeating-linear-gradient(var(--gradient2)),
+    repeating-linear-gradient(var(--gradient1));
+border: 0px;
+--gradient3:
+    var(--angle2), transparent 0px 4px, var(--decor1) 4px 6px, transparent 6px 10px;
+--gradient2:
+    var(--angle1), transparent, transparent 25%, var(--softest-thing) 50%, var(--softest-space) 50%, transparent 75%, transparent;
+--gradient1:
+    var(--angle1), var(--color1), var(--color1) 50%, var(--color2) 50%, var(--color2);
+}
+
+.-main .badge a {width:88%}
+.-main .badge a:first-child {margin: auto -44%}
+.-main .badge u {border:2px dashed var(--decor2);}
+.-main .badge a[style] {border:1px solid #0007}
+.-main .badge>b {border: 1px solid var(--softer-thing);}
+:is(.-main, .-select) :is(.badge, .badge>b, .badge>b>u) {border-radius:0px;}
+.-main :is(.badge:first-child, .badge:first-child>b, .badge:first-child>b>u) {border-top-left-radius:16px;}
+.-main :is(.badge:nth-child(4), .badge:nth-child(4)>b, .badge:nth-child(4)>b>u) {border-top-right-radius:16px;}
+:is(.-main, .-select, .-matching) b.badge a:first-of-type {
+background: var(--soft-thing);
+color: var(--boldest-space);
+}
+
+
+
+
+
+
+
 
 .item{
 background:
@@ -66,15 +116,22 @@ font-family: var(--mono-font);
 .sP {--decor2: #fff9}
 */
 
-.sI {--decor2: #fff9}
-.sE {--decor2: #0007}
 .sJ {--decor1: #0002}
 .sP {--decor1: #fff3}
+
+.sI {--decor2: #fff9}
+.sE {--decor2: #0007}
 
 .V1 {--angle1: 135deg}
 .E1 {--angle1: 45deg}
 .P1 {--angle1: 180deg}
 .L1 {--angle1: 90deg}
+
+.V2 {--angle2: 135deg}
+.E2 {--angle2: 45deg}
+.P2 {--angle2: 180deg}
+.L2 {--angle2: 90deg}
+
 
 .V2 {--pattern: repeating-linear-gradient(135deg, transparent 0px 4px, var(--decor1) 4px 6px, transparent 6px 10px)}
 .E2 {--pattern: repeating-linear-gradient(45deg, transparent 0px 4px, var(--decor1) 4px 6px, transparent 6px 10px)}
@@ -94,34 +151,44 @@ font-family: var(--mono-font);
 .socnone {--color1: #c3c4c2ed}
 .psynone {--color2: #c3c4c2ed}
 
+/*
 .best, .good {}
 .norm {}
 .poor {}
 .sick {}
+*/
 
 
-.blank {background-color:var(--bold-space); background-image:linear-gradient(var(--bold-space) 0px, transparent 360px); clear:both; padding:16px; border:1px solid var(--bold-thing);}
+.blank, .header, .footer {background-color:var(--bold-space); 
+background-image:
+    repeating-linear-gradient(-60deg, transparent, transparent 2px, var(--soft-space) 2px, var(--soft-space) 4px),
+    repeating-linear-gradient(30deg, transparent, transparent 1px, var(--soft-space) 1px, var(--soft-space) 4px),
+    linear-gradient(var(--bold-space) 0px, transparent 360px); 
+clear:both; padding:16px; border:1px solid var(--bolder-thing);}
 hr {border:2px dashed var(--bolder-thing); margin:1em calc(-1em + 2px); height:0; border-bottom:0;}
 hr:first-child {margin-top:calc(-1em + 2px); margin-bottom: 2em;}
 hr:last-child {margin-bottom:calc(-1em + 2px); margin-top: 2em;}
-.bottom-rounded {border-bottom-left-radius:1em; border-bottom-right-radius:1em;}
 .item p{margin:0px;}
 
 .header {
 border-top-left-radius:1em;
 border-top-right-radius:1em;
-background: var(--contrasty-orange);
+background:
+    repeating-linear-gradient(-60deg, var(--soft-space), var(--soft-space) 2px, var(--softer-space) 2px, var(--softer-space) 4px),
+    repeating-linear-gradient(30deg, var(--soft-space), var(--soft-space) 1px, var(--softer-space) 1px, var(--softer-space) 4px),
+    var(--softer-space);
 border: 1px solid var(--bolder-thing);
 overflow:hidden;
 }
 
+.footer, .bottom-rounded {
+border-bottom-left-radius:1em;
+border-bottom-right-radius:1em;
+}
+
 .header h2 {
-padding: 1em;
-background: var(--softer-space);
   color: var(--bold-thing);
   text-align: center;
-  background-image: url(denim.png);
-  background-size:360px;
 
 }
 
@@ -161,77 +228,44 @@ background: var(--softest-thing);
 }
 
 
-#diagnosis ul {
+#matching ul {
 border-radius:0.5rem;
 overflow:hidden;
 }
 
-#diagnosis h3 {
+#matching h3 {
 text-align:center;
 font-weight:bold;
 }
 
-#diagnosis td {
+#matching td {
 font-size:var(--smaller);
 }
 
-#diagnosis button {
+#matching button {
 letter-spacing:-3%;
 }
 
-#diagnosis td div {
+#matching td div {
 border-radius:0.5rem;
 overflow:hidden;
 }
 
-#diagnosis .best td :is(button, div, i) {background:var(--softer-green);}
-#diagnosis .good td :is(button, div, i) {background:var(--softer-green);}
-#diagnosis .norm td :is(button, div, i) {background:var(--softer-blue);}
-#diagnosis .poor td :is(button, div, i) {background:var(--softer-purple);}
-#diagnosis .sick td :is(button, div, i) {background:var(--softer-red);}
-#diagnosis .none td :is(button, div, i) {background:var(--soft-thing);}
 
 /*
-#diagnosis .best button, #diagnosis .good button {background:var(--softer-green);}
-#diagnosis .norm button {background:var(--softer-blue);}
-#diagnosis .poor button {background:var(--softer-purple);}
-#diagnosis .sick button {background:var(--softer-red);}
-#diagnosis .none button {background:var(--soft-thing);}
+#matching .best button, #matching .good button {background:var(--softer-green);}
+#matching .norm button {background:var(--softer-blue);}
+#matching .poor button {background:var(--softer-purple);}
+#matching .sick button {background:var(--softer-red);}
+#matching .none button {background:var(--soft-thing);}
 */
 
-#diagnosis td:first-child div {text-align:right;}
-#diagnosis td:first-child div button {border-radius: 5rem .5rem .5rem 5rem;}
-#diagnosis td:nth-child(2) div button {border-radius: .5rem 5rem 5rem .5rem;}
+#matching td:first-child div {text-align:right;}
+#matching td:first-child div button {border-radius: 5rem .5rem .5rem 5rem;}
+#matching td:nth-child(2) div button {border-radius: .5rem 5rem 5rem .5rem;}
 
-#diagnosis .grid i{
-sbackground: var(--softer-green);
-  border-radius: 0.5rem;
-  padding: 12% 12% 0;
-  display: block;
-  aspect-ratio: 1;
-}
 
-#diagnosis img {
-cursor:pointer;
-border: 1px solid var(--soft-thing);
-border-radius: 100%;
-}
-
-#diagnosis i a {
-display: flex;
-aspect-ratio: 1;
-border: 1px solid var(--soft-thing);
-border-radius: 100%;
-background: var(--soft-space);
-color: var(--bold-space);
-font-size: 3rem;
-font-family: var(--mono-font);
-}
-
-#diagnosis i a b {
-margin: auto;
-}
-#diagnosis div button {
+#matching div button {
 color: var(--boldest-space);
 text-decoration: underline;
 border: 0;
@@ -248,15 +282,22 @@ display:block;
 }
 .v {background:red}
 
-#selector {
+
+#selector:not([hidden]) {
 display:table;
-background: var(--contrasty-orange);
+width:100%;
+background:
+    repeating-linear-gradient(-60deg, var(--soft-space), var(--soft-space) 2px, var(--softer-space) 2px, var(--softer-space) 4px),
+    repeating-linear-gradient(30deg, var(--soft-space), var(--soft-space) 1px, var(--softer-space) 1px, var(--softer-space) 4px),
+    var(--softer-space);
+
 }
 
-#selector.hidden {
+/*
+#selector[hidden] {
 display:none;
 }
-
+/*
 #selector i {
 width: calc(100% / 4);
 aspect-ratio: 1;
@@ -267,7 +308,9 @@ background-size: 360px;
 border: 1px solid var(--bold-thing);
 display: flex;
 }
+*/
 
+/*
 #selector i.selected {
 background: var(--bold-space);
 }
@@ -293,14 +336,32 @@ font-family: var(--mono-font);
 #selector i a :is(b, img) {
 margin: auto;
 }
+*/
 
 .-main h2 {
 font-size: var(--large);
 }
 
 .-edit.hint, .-edit.hint.hidden:has(h3) {display: none;}
-.-edit.hint:has(h3) {display: block;}
+.-edit.hint:not([hidden]):has(h3) {display: block;}
 
 
 .-x {color:red;}
 label {display:block; margin: 0 0 .25rem 1rem}
+
+
+.-matching b.badge {
+border:none;
+font-size:3rem;
+}
+.-matching :is(b.badge, b.badge a:first-of-type) {
+  sbackground: var(--softer-blue);
+}
+.-matching b.badge i {font-size:3rem}
+
+#matching .best td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--softer-green);}
+#matching .good td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--softer-green);}
+#matching .norm td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--softer-blue);}
+#matching .poor td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--softer-purple);}
+#matching .sick td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--softer-red);}
+#matching .none td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--soft-thing);}
