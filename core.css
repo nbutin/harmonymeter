@@ -482,13 +482,14 @@ display: unset;
 
 b.badge {
 float: left;
-width: 100%;
+swidth: 100%;
 font-size:2rem;
 font-family:var(--mono-font);
 }
 
 b.badge, b.badge :is(b, u, a) {
 display: flex;
+width: 100%;
 aspect-ratio: 1;
 border-radius: .5rem;
 }
@@ -531,6 +532,7 @@ text-decoration: underline;
 
 b.badge a b {
 border-radius: 100%;
+width: calc(100% + 2px);
 margin: -1px;
 }
 

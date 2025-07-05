@@ -469,11 +469,11 @@ function changedProfile(name, value) {
         }
         const hints = document.querySelectorAll('.-edit.hint div');
         if (name == 'name') {
+            document.querySelector('.-edit input[name="name"]').value = value.replaceAll(/[<>]/g, '');
             if (!value && profile[0]) button.innerText = 'Удалить';
             else button.innerText = 'Сохранить';
             let image = document.querySelector('.-edit :has(>b.badge)');
             let image_url = image.querySelector('a[style]').style.backgroundImage.slice(5, -2);
-            //~ image.innerHTML = coreBadge(image_url || getAbbr(-1, value));
             image.innerHTML = coreBadge(image_url, value);
             appCachedProfileValue(0, value);
         } else if (name.split('-').slice(-1)[0] == 's') {
@@ -506,6 +506,14 @@ function getEditedProfileValues() {
 // ok
 function saveProfile() {
     const values = getEditedProfileValues();
+    var ok = true;
+    window.prop_profiles.some((val, i) => {
+        if (val[0] == values[0] && i != values[9]) {
+            ok = confirm('Профиль с таким именем уже существует. Продолжить сохранение?');
+            return true;
+        }
+    });
+    if (!ok) return;
     if ([NaN].includes(values[9])) {
         coreStoredImage(window.prop_profiles.length, appCachedProfileValue(8));
         window.prop_profiles.push(values.slice(0, 3));
@@ -748,13 +756,16 @@ function embodyTestP() {
 function checkTestP(step) {
     const units = document.getElementsByClassName('-test-p');
     const [form1, form2, form3] = units[1].querySelectorAll('form p');
-    const checked = form1.querySelectorAll('input[data-checked]');
-    if (event.target.parentNode.parentNode.childElementCount == 4 && checked.length > 1) {
+    const checked1 = form1.querySelectorAll('input[data-checked]');
+    const checked2 = form2.querySelectorAll('input[data-checked]');
+    const checked3 = form3.querySelectorAll('input[data-checked]');
+    if (event.target.parentNode.parentNode.childElementCount == 4 && checked1.length > 1) {
         embodyTestP();
     }
     event.target.checked = true;
     event.target.dataset.checked = true;
-    if (checked.length == 1) {
+    //~ const block
+    if (checked1.length == 1) {
         units[1].querySelectorAll('.step2').forEach(node => {
             node.classList.remove('hidden');
             form2.innerText = '';
@@ -779,6 +790,20 @@ function checkTestP(step) {
                     node.onchange = checkTestP;
                 });
             });
+        });
+    } else if (event.target.name == '13' && checked2.length) {
+        form2.querySelectorAll('input').forEach(node => {
+            if (node.value != event.target.value) {
+                node.checked = false;
+                node.removeAttribute('data-checked');
+            } 
+        });
+    } else if (event.target.name == '24' && checked3.length) {
+        form3.querySelectorAll('input').forEach(node => {
+            if (node.value != event.target.value) {
+                node.checked = false;
+                node.removeAttribute('data-checked');
+            } 
         });
     }
     if (units[1].querySelectorAll('input[data-checked]').length == 4) {
