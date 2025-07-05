@@ -273,9 +273,9 @@ function embodyMatching() {
     if (rating[0] == rating[1]) var sum_percent = rating[0];
     else var sum_percent = `от ${rating[0]} до ${rating[1]}`;
     if (rating[4][0] > -1) var soc_percent = rating[4][0] + '%';
-    else var soc_percent = 'не известно';
+    else var soc_percent = 'неизвестно';
     if (rating[5][0] > -1) var psy_percent = rating[5][0] + '%';
-    else var psy_percent = 'не известно';
+    else var psy_percent = 'неизвестно';
     var sum_rating = percentToText(rating[0], rating[1]);
     var soc_rating = percentToText(rating[4][0], rating[4][1]);
     var psy_rating = percentToText(rating[5][0], rating[5][1]);
@@ -366,7 +366,11 @@ function fromCacheOrProfile(index) {
     if (index == 8) {
         return cached || coreStoredImage(profile[9]) || `images/${profile[9]}.jpg`;
     } else {
-        return cached || profile[index];
+        if (cached != undefined) {
+            return cached;
+        } else {
+            return profile[index];
+        }
     }
 }
 
@@ -574,7 +578,12 @@ function updateProps(props) {
 
 // ok
 function applyImage() {
-    const url = URL.createObjectURL(document.getElementById('uploaded').files[0]);
+    const file = document.getElementById('uploaded').files[0];
+    if (!['image/jpeg', 'image/gif', 'image/svg+xml', 'image/png'].includes(file.type)) {
+        alert('Неверный тип файла.\nПодойдут: png, jpeg, svg и gif');
+        return;
+    }
+    const url = URL.createObjectURL(file);
     compressImage(url, data => {
         appCachedProfileValue(9, appGetProfileByHash()[9]);
         appCachedProfileValue(8, data);
@@ -758,6 +767,8 @@ function checkTestP(step) {
                     form2.appendChild(clone);
                 }
                 form2.querySelectorAll('input').forEach(node => {
+                    node.checked = false;
+                    node.removeAttribute('data-checked');
                     node.name = '13';
                     node.onchange = checkTestP;
                 });
@@ -784,11 +795,11 @@ function acceptTestP() {
     const f2 = f24.querySelector('[data-checked]');
     const f4 = f24.querySelector('input:not([data-checked])');
     const type_code = `${f1.value}${f2.value}${f3.value}${f4.value}`;
-    //~ const tested_id = parseInt(location.hash.split('-').slice(-1)[0]);
-    //~ window._cached_[9] = tested_id;
     appCachedProfileValue(9, appGetProfileByHash()[9]);
     psy_types.forEach((v, i) => {
-        if (v[0] == type_code) appCachedProfileValue(2, i); // window._cached_[2] = i;
+        if (v[0] == type_code) {
+            appCachedProfileValue(2, i);
+        }
     });
     history.back();
 }
