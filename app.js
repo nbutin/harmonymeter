@@ -1,5 +1,5 @@
 window.prop_profiles = [...characters];
-window.prop_selected = 1;
+//~ window.prop_selected = 1;
 //~ var app_selected_character = 1;
 
 
@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function calcSocRating(type_id) {
-    if (type_id < 0 || window.prop_profiles[window.prop_selected][1] < 0) return [-1, -1, []];
-    const selected = soc_types[window.prop_profiles[window.prop_selected][1]];
+    if (type_id < 0 || window.prop_profiles[appGetSelected()][1] < 0) return [-1, -1, []];
+    const selected = soc_types[window.prop_profiles[appGetSelected()][1]];
     const tested = soc_types[type_id];
     var n1 = 0;
     var r = 0;
@@ -71,8 +71,8 @@ function calcSocRating(type_id) {
 }
 
 function calcPsyRating(type_id) {
-    if (type_id < 0 || window.prop_profiles[window.prop_selected][2] < 0) return [-1, -1, []];
-    const selected = psy_types[window.prop_profiles[window.prop_selected][2]];
+    if (type_id < 0 || window.prop_profiles[appGetSelected()][2] < 0) return [-1, -1, []];
+    const selected = psy_types[window.prop_profiles[appGetSelected()][2]];
     const tested = psy_types[type_id];
     var n1 = 0;
     var r = 0;
@@ -128,16 +128,31 @@ function sumRating(numbers) {
 function calcAllRatings() {
     var map = [];
     window.prop_profiles.forEach((val, i) => {
-        if (val && window.prop_selected != i) {
+        if (val && appGetSelected() != i) {
             map.push(calcRating(i));
         }
     });
-    return map.sort((a, b) => sumRating(b) - sumRating(a));
+    return map.sort((a, b) => (sumRating(b) + b[2] / 1000000) - (sumRating(a) + a[2] / 1000000));
 }
+
+
+function appGetSelected() {
+    if (window.prop_selected != undefined) {
+        return window.prop_selected;
+    } else {
+        const selfdeterminated = window.prop_profiles[0][1] + window.prop_profiles[0][1] > -2;
+        if (selfdeterminated) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+}
+
 
 // ok
 function embodyMain() {
-    const first = calcRating(window.prop_selected);
+    const first = calcRating(appGetSelected());
     const empty = [-1, -1, -1, -1, [], []];
     var items = [first, ...calcAllRatings(), empty, empty, empty, empty, empty];
     items = items.slice(0, (-items.length % 4) || -4);
@@ -251,7 +266,7 @@ function formatRatingDetails(items) {
 
 // ok
 function embodyMatching() {
-    const id1 = window.prop_selected;
+    const id1 = appGetSelected();
     const selected = window.prop_profiles[id1];
     const matched = appGetProfileByHash();
     const id2 = matched[9];
