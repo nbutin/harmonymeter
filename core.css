@@ -3,6 +3,7 @@ reset
 */
 
 :root {
+font-size: 16px;
 --smallest:0.625em;
 --small:0.75em;
 --smaller:0.875em;
@@ -209,7 +210,7 @@ select,
 textarea {
 color: var(--bold-thing);
 font-family: var(--base-font);
-font-size: var(--norm);
+font-size: 1em;
 line-height: 1.5em;
 margin: 0;
 padding: 0;
