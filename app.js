@@ -529,7 +529,7 @@ function saveProfile() {
     const values = getEditedProfileValues();
     var ok = true;
     window.prop_profiles.some((val, i) => {
-        if (val[0] == values[0] && i != values[9]) {
+        if (val && val[0] == values[0] && i != values[9]) {
             ok = confirm('Профиль с таким именем уже существует. Продолжить сохранение?');
             return true;
         }
