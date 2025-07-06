@@ -29,12 +29,25 @@ function embody(){
         }
     });
     scroll(0, 0);
+    fixLayout();
     core_history_of_embodyings.unshift(hash);
     core_history_of_embodyings = core_history_of_embodyings.slice(0, 5);
     Object.entries(window.embodying_triggers || {}).forEach(i => {
         if (hash.match(new RegExp(i[0]))) i[1]();
     });
 }
+
+
+function fixLayout() {
+    if (window.vk_user_id) {
+        vkBridge.send("VKWebAppScroll", {top: 0});
+        vkBridge.send('VKWebAppResizeWindow', {
+            width: 640,
+            height: Math.max(document.body.offsetHeight + 96, 640),
+        });
+    }
+}
+
 
 
 function coreGetSuiteParam() {
