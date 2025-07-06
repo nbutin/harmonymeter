@@ -1,3 +1,7 @@
+/*
+reset
+*/
+
 :root {
 --smallest:0.625em;
 --small:0.75em;
@@ -205,7 +209,7 @@ select,
 textarea {
 color: var(--bold-thing);
 font-family: var(--base-font);
-font-size: 1em;
+font-size: var(--norm);
 line-height: 1.5em;
 margin: 0;
 padding: 0;
@@ -515,10 +519,13 @@ b.badge u {
 width: calc(100% - 4px);
 margin: auto;
 border: 2px dotted var(--softer-thing);
+text-decoration: none;
 }
 
 b.badge i {
 margin:auto;
+text-align: center;
+line-height: 50%;
 }
 
 b.badge, b.badge a {
@@ -527,7 +534,7 @@ border: 1px solid var(--soft-thing);
 
 b.badge, b.badge a:first-of-type {
 background: var(--softest-thing);
-text-decoration: underline;
+text-decoration: none;
 }
 
 b.badge a b {

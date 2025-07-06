@@ -10,18 +10,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="black">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="description" content="Диагностика и наладка отношений, средствами популярной психологии">
+    <meta name="description" content="Диагностика и наладка отношений средствами популярной психологии — доступно и увлекательно">
     <title>Погодавдо-метр</title>
-    <link rel="stylesheet" href="core.css?v=7">
-    <link rel="stylesheet" href="app.css?v=7">
+    <link rel="stylesheet" href="core.css?v=8">
+    <link rel="stylesheet" href="app.css?v=8">
     <!--link rel="manifest" href="app.webmanifest"-->
     <link rel="apple-touch-icon" href="icons/app192.png">
     <link rel="icon" href="icons/app48.png">
     <link rel="shortcut icon" href="icons/app48.png">
-    <script type="text/javascript" src="core.js?v=7"></script>
-    <script type="text/javascript" src="data.js?v=7"></script>
-    <script type="text/javascript" src="app.js?v=7"></script>
+    <script type="text/javascript" src="core.js?v=8"></script>
+    <script type="text/javascript" src="data.js?v=8"></script>
+    <script type="text/javascript" src="app.js?v=8"></script>
     <script src="browser.min.js"></script>
+    <script src="sdk.js"></script>
 </head>
 <body>
 
@@ -39,9 +40,10 @@
 <div class="blank part-of -main">
     <hr>
     <h2>Диагностика<br/>
-    и наладка отношений,<br/>
+    и наладка отношений<br/>
     средствами популярной<br/>
-    психологии</h2>
+    психологии — доступно<br/>
+    и увлекательно</h2>
     <p>Это карта психосоциотипической совместимости. Смешарики здесь для наглядного примера. Их позиции соответствуют прописанным характерам. Добавьте на карту себя, своих близких и&nbsp;знакомых, чтобы узнать, с какими позитивными эффектами или, наоборот, трудностями вы будете встречаться, взаимодействуя друг с другом; узнать,&nbsp;насколько ваши отношения могут быть комфортными и плодотворными; а&nbsp;также научиться замечать, ценить и&nbsp;культивировать ростки гармонии, сглаживая острые углы и противоречия.</p>
     <p>Это не игра, не гороскоп, не гадание на&nbsp;кофейной гуще, а квинтэссенция популярной практической психологии. Главное здесь — научиться правильно определять психо- и социотипы. Для&nbsp;того,&nbsp;чтобы помочь вам в этом, мы&nbsp;разработали два быстрых и довольно эффективных теста. Не во всех, но во многих случаях эти тесты справляются со&nbsp;своей задачей на отлично. Убедиться в&nbsp;корректности определения типа можно с&nbsp;помощью специалиста по социо- и&nbsp;психотипированию, либо посредством самостоятельного погружения в этот интересный и полезный предмет.</p>
 </div>
@@ -54,7 +56,7 @@
     <table class="grid">
         <tr>
             <td><button onclick="setup()">Мне нравится</button></td>
-            <td><button onclick="share()">Поделиться</button></td>
+            <td><button onclick="visit('featured')">Поделиться</button></td>
         </tr>
     </table>
 </div>
@@ -83,7 +85,7 @@
             <td></td>
         </tr>
         <tr>
-            <td colspan="2"><input type="text" name="name"  onkeyup="changedProfile()" maxlength="23" placeholder="Имя" /></td>
+            <td colspan="2"><input type="text" name="name" onkeyup="changedProfile()" maxlength="23" placeholder="Имя" /></td>
             <td rowspan="2" onclick="selectFile()"><b class="badge"></b></td>
         </tr>
         <tr>

@@ -352,12 +352,11 @@ label {display:block; margin: 0 0 .25rem 1rem}
 
 .-matching b.badge {
 border:none;
-font-size:3rem;
 }
 .-matching :is(b.badge, b.badge a:first-of-type) {
   sbackground: var(--softer-blue);
 }
-.-matching b.badge i {font-size:3rem}
+.-matching b.badge i {font-size:3.2rem; line-height: 50%;}
 
 #matching .best td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--softer-green);}
 #matching .good td :is(button, div, b.badge, b.badge a:first-of-type) {background:var(--softer-green);}

@@ -1,6 +1,13 @@
-window.prop_profiles = [...characters];
-//~ window.prop_selected = 1;
-//~ var app_selected_character = 1;
+function _reset() {
+    window.prop_version = undefined;
+    window.prop_selected = undefined;
+    window.prop_stored = {
+        prop_profiles: [],
+        //~ 'image-12': '',
+    };
+    window.prop_profiles = [...characters];
+}
+_reset();
 
 
 window.embodying_triggers = {
@@ -13,17 +20,14 @@ window.embodying_triggers = {
     '^-test-p-': embodyTestP,
 };
 
-window.prop_stored = {
-    prop_profiles: [],
-    //~ 'image-12': '',
-};
 
 document.addEventListener('DOMContentLoaded', () => {
     prepareSelectors();
     appLoadProps();
     //~ engageTriggers();
     //~ embodyMain();
-    vkInit();
+    if (location.search.match(/vk_user_id=(\d+)/)) initVk();
+    else if (window.self !== window.top) initBastyon();
 });
 
 function calcSocRating(type_id) {
@@ -465,15 +469,16 @@ function changedProfile(name, value) {
     const edited = getEditedProfileValues();
     const button = document.querySelector('.-edit button');
     if (name != 'name' && value == 'test') {
-        console.log(11111111, window._cached_);
-        //~ let id = ![NaN].includes(profile[9]) && profile[9] || '';
         location.hash = `${name}-${profile[9]}`;
         return;
     }
     if (name == 'name' && value == '-reset') {
         localStorage.clear();
+        for (k in window.prop_stored) {
+            delete window[k];
+        }
+        _reset();
         location.hash = '';
-        location.reload();
         return;
     }
     setTimeout(() => {
@@ -484,8 +489,9 @@ function changedProfile(name, value) {
         }
         const hints = document.querySelectorAll('.-edit.hint div');
         if (name == 'name') {
-            document.querySelector('.-edit input[name="name"]').value = value.replaceAll(/[<>]/g, '');
-            if (!value && profile[0]) button.innerText = 'Удалить';
+            let input_name = document.querySelector('.-edit input[name="name"]');
+            input_name.value = value.replaceAll(/[<>]|^\s+$/g, '');
+            if (!input_name.value && profile[0]) button.innerText = 'Удалить';
             else button.innerText = 'Сохранить';
             let image = document.querySelector('.-edit :has(>b.badge)');
             let image_url = image.querySelector('a[style]').style.backgroundImage.slice(5, -2);
@@ -512,7 +518,7 @@ function changedProfile(name, value) {
 // 
 function getEditedProfileValues() {
     const [input_name, soc_selector, psy_selector] = document.querySelectorAll('.-edit input[name="name"], .-edit select');
-    const values = [input_name.value, parseInt(soc_selector.value), parseInt(psy_selector.value)];
+    const values = [input_name.value.replaceAll(/^\s+$/g, ''), parseInt(soc_selector.value), parseInt(psy_selector.value)];
     values[9] = appGetProfileByHash()[9];
     return values;
 }
@@ -558,45 +564,6 @@ function selectFile() {
     document.getElementById('uploaded').click();
 }
 
-function listStoredProps() {
-    return {prop_version: 0, prop_stored: {}, ...(window.prop_stored  || {})};
-}
-
-
-function updateProps(props) {
-    const actual_version = window.prop_version;
-    if (!props.prop_version || props.prop_version <= actual_version) {
-        if (!window.prop_version) {
-            window.prop_version = 1;
-            console.log(`embodied with initial props`)
-            embody();
-        } else {
-            console.log(`actual version of props - ${actual_version}, loaded version - ${props.prop_version}`)
-        }
-        return;
-    }
-    if (props.prop_stored && typeof(window.prop_stored) == typeof(props.prop_stored) && props.prop_stored.toString() == "[object Object]") {
-        window.prop_stored = props.prop_stored;
-    }
-    for (let name in props) {
-        if (name in window.prop_stored && typeof(window.prop_stored[name]) == typeof(props[name])) {
-            if (typeof(props[name]) == 'object' && props[name]) {
-                if (!window[name] && Object.entries(props[name]).length) {
-                    window[name] = props[name];
-                } else {
-                    for (let k in props[name]) {
-                        window[name][k] = props[name][k];
-                    }
-                }
-            } else if (props[name] && props[name] != window.prop_stored[name]) {
-                window[name] = props[name];
-            }
-        }
-    }
-    window.prop_version = props.prop_version;
-    console.log(`props version updated from '${actual_version}' to ${window.prop_version}`)
-    embody();
-}
 
 
 // ok
@@ -659,47 +626,6 @@ function coreStoredImage(id, data) {
 }
 
 
-
-function appLoadProps() {
-    _loadPropsLocal();
-    //~ _loadPropsVk();
-    //~ _loadPropsTg();
-}
-
-function appSaveProps(list, locally) {
-    window.prop_version += 1;
-    list = typeof(list) == 'object' && list.length && ['prop_version', ...list]
-        || typeof(list) == 'string' && ['prop_version', list]
-        || Object.keys(listStoredProps()).filter(name => name.slice(0, 5) == 'prop_');
-    _savePropsLocal(list);
-    if (!locally) {
-        //~ _savePropsVk();
-        //~ _savePropsTg();
-    }
-}
-
-function _loadPropsLocal() {
-    const props = {};
-    const prop_stored = JSON.parse(localStorage['prop_stored'] || 'null');
-    for (name in Object.assign(listStoredProps(), prop_stored)) {
-        if (!['undefined', 'NaN'].includes(localStorage[name])) {
-            props[name] = JSON.parse(localStorage[name] || 'null');
-        }
-    }
-    updateProps(props);
-}
-
-function _savePropsLocal(list) {
-    list.forEach(name => {
-        if ([undefined, null].includes(window[name])) {
-            delete localStorage[name];
-            console.log(`${name} deleted`);
-        } else {
-            localStorage[name] = JSON.stringify(window[name]);
-            console.log(`${name} stored locally`);
-        }
-    });
-}
 
 function altMain() {
     if (location.hash == '#-main') location.hash = '-select';
@@ -848,12 +774,28 @@ function acceptTestP() {
 function visit(name) {
     var map = {
         'default': 'https://vk.com/shorewards',
+        'featured': 'https://vk.com/shorewards',
         'lexigo': 'https://vk.com/lexigo2',
         'antimatrix': 'https://vk.com/antimatriks',
         'lifetuner': 'https://vk.com/progressinator',
     }
-    window.open(map[name || 'default']);
+    openExternalLink(map[name || 'default']);
 }
+
+//~ function visit(address) {
+    //~ var url = `https://bastyon.com/${address || app_author}`;
+    //~ if (sdk.applicationInfo) {
+        //~ sdk.helpers.channel(address || app_author)
+        //~ .catch(() => {
+            //~ openExternalLink(url);
+        //~ });
+    //~ } else {
+        //~ openLinkInNewWindow(url);
+    //~ }
+//~ }
+
+
+
 
 function share() {
     //replace with opening an external link to the corresponding post

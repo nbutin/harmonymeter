@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             //~ console.log('Service Worker Registered');
         //~ });
     //~ }
+    location.hash = '-main';
     window.addEventListener('hashchange', embody);
 });
 
@@ -53,10 +54,10 @@ function coreGetSuiteParamsAll() {
 
 // ok
 function coreAcronym(name) {
-    var name = name && `${name}`.split(' ') || '';
+    var name = name && `${name}`.split(' ') || [''];
     var abbr = '';
-    if (name.length > 1) name.forEach(i => {abbr += i[0] && i[0].toUpperCase() || ''});
-    return (abbr || name[0] || '').slice(0, 3);
+    if (name.length > 1) name.forEach(i => {abbr += i[0] && [...i][0].toUpperCase() || ''});
+    return (abbr || [...name[0] || '']).slice(0, 3).join('');
 }
 
 function embedded(scheme) {
@@ -91,7 +92,7 @@ function coreBadge(image, label, onclick, featured, modifiers) {
 
 
 // OK
-function vkInit() {
+function initVk() {
     vkBridge
     .send('VKWebAppInit')
     .then(data => {
@@ -114,6 +115,14 @@ function vkInit() {
 }
 
 
+function initBastyon() {
+    window.sdk = new BastyonSdk();
+    sdk.init().then((obj) => {
+        console.log('bastyon sdk initialized');
+        sdk.emit('loaded');
+    });
+}
+
 //~ function visit(address) {
     //~ var url = `https://bastyon.com/${address || app_author}`;
     //~ if (sdk.applicationInfo) {
@@ -127,86 +136,152 @@ function vkInit() {
 //~ }
 
 
-//~ function openExternalLink(url) {
-    //~ if (!sdk.applicationInfo) {
-        //~ openLinkInNewWindow(url);
-    //~ } else {
-        //~ sdk.openExternalLink(url)
-        //~ .catch(() => {
-            //~ sdk.permissions.request(['externallink'])
-            //~ .then(() => {
-                //~ sdk.openExternalLink(url);
-            //~ })
-            //~ .catch(() => {
-                //~ sdk.helpers.opensettings();
-            //~ });
-        //~ });
-    //~ }
-//~ }
+function openExternalLink(url) {
+    if (window.vk_user_id || !window.sdk || !window.sdk.applicationInfo) {
+        openLinkInNewWindow(url);
+    } else {
+        window.sdk.openExternalLink(url)
+        .catch(() => {
+            window.sdk.permissions.request(['externallink'])
+            .then(() => {
+                window.sdk.openExternalLink(url);
+            })
+            .catch(() => {
+                window.sdk.helpers.opensettings();
+            });
+        });
+    }
+}
 
 
-//~ function openLinkInNewWindow(href) {
-    //~ var a = document.createElement('a');
-    //~ a.href = href;
-    //~ a.setAttribute('target', '_blank');
-    //~ a.click();
-//~ }
+function openLinkInNewWindow(href) {
+    var a = document.createElement('a');
+    a.href = href;
+    a.setAttribute('target', '_blank');
+    a.click();
+}
 
 
 
 
-//~ function _savePropsVk(key, callback) {
-    //~ const vk_limit = 4096;
-    //~ localStorage['val_'] = JSON.stringify(val_);
-    //~ let operation;
-    //~ (key && [key] || Object.keys(vk_stored)).forEach(k => {
-        //~ let [func, value] = [vk_stored[k], val_[k]];
-        //~ if (func) value = func(val_[k]);
-        //~ let str = JSON.stringify(value);
-        //~ if (new Blob([str]).size <= vk_limit) {
-            //~ console.log('%s sent to vk storage', k);
-            //~ operation = vkBridge.send("VKWebAppStorageSet", {
-                //~ "key": k, "value": str
-            //~ });
-        //~ }
-    //~ });
-    //~ if (callback) {
-        //~ operation
-        //~ .then(callback)
-        //~ .catch(callback);
-    //~ }
-//~ }
 
 
-//~ // ok
-//~ const loadValues = function() {
-    //~ let stored = JSON.parse(localStorage['val_'] || '{}');
-    //~ assignCarefully(val_, stored);
-    //~ prepareTask();
-    //~ if (vk_user_id) {
-        //~ drawTable();
-        //~ fetchCompanionPositions();
-    //~ }
-    //~ vkBridge.send("VKWebAppStorageGet", {"keys": Object.keys(val_)})
-    //~ .then(data => {
-        //~ stored = {};
-        //~ data.keys.forEach(obj => {
-            //~ try {
-                //~ stored[obj.key] = JSON.parse(obj.value);
-                //~ console.log('Got %s from vk storage', obj.key);
-            //~ } catch {
-                //~ console.warn('Invalid vk storage obj', obj);
-            //~ }
-        //~ });
-        //~ if (assignCarefully(val_, stored)) {
-            //~ console.log('Users data updated from VKWebAppStorage');
-            //~ localStorage['val_'] = JSON.stringify(val_);
-            //~ prepareTask();
-            //~ drawTable();
-            //~ fetchCompanionPositions();
-        //~ }
-    //~ })
-    //~ .catch(error => {});
-//~ }
+
+
+
+
+
+
+
+
+
+
+
+
+function updateProps(props) {
+    // Если загружаемая версия выше, то присваиваем prop_stored и все её аттрибуты объекту window,
+    // при условии, что тип их содержимого не противоречит заявленному в prop_stored
+    const actual_version = window.prop_version;
+    if (!props.prop_version || props.prop_version <= actual_version) {
+        if (!window.prop_version) {
+            window.prop_version = 1;
+            console.log(`embodied with initial props`)
+            embody();
+        } else {
+            console.log(`actual version of props - ${actual_version}, loaded version - ${props.prop_version}`)
+        }
+    } else if (props.prop_stored && props.prop_stored.toString() == "[object Object]") {
+        window.prop_version = props.prop_version;
+        window.prop_stored = props.prop_stored;
+        for (let name in props) {
+            if (name in props.prop_stored && typeof(props.prop_stored[name]) == typeof(props[name])) {
+                window[name] = props[name];
+            }
+        }
+        console.log(`props version updated from '${actual_version}' to ${window.prop_version}`)
+        embody();
+    }
+}
+
+
+function appLoadProps() {
+    _loadPropsLocal();
+    _loadPropsVk();
+}
+
+
+function _loadPropsLocal() {
+    const props = {};
+    const prop_stored = JSON.parse(localStorage['prop_stored'] || 'null');
+    for (name in {prop_version: 0, prop_stored: {}, ...(prop_stored  || {})}) {
+        if (!['undefined', 'NaN'].includes(localStorage[name])) {
+            props[name] = JSON.parse(localStorage[name] || 'null');
+        }
+    }
+    updateProps(props);
+}
+
+
+function _loadPropsVk() {
+    if (!window.vk_user_id) return;
+    const props = {};
+    vkBridge
+    .send("VKWebAppStorageGet", {"keys": ['prop_version', 'prop_stored']})
+    .then(pre => {
+        pre.keys.forEach(obj => {
+            props[obj.key] = JSON.parse(obj.value);
+        });
+        vkBridge
+        .send("VKWebAppStorageGet", {"keys": Object.keys(props.prop_stored)})
+        .then(data => {
+            data.keys.forEach(obj => {
+                props[obj.key] = JSON.parse(obj.value);
+            });
+            updateProps(props);
+        });
+    });
+}
+
+
+function appSaveProps(list) {
+    window.prop_version += 1;
+    list = typeof(list) == 'object' && list.length && list
+        || typeof(list) == 'string' && [list]
+        || Object.keys(window.prop_stored  || {});
+    list = ['prop_version', 'prop_stored', ...list];
+    _savePropsLocal(list);
+    _savePropsVk(list.filter(name => name.slice(0, 5) == 'prop_'));
+}
+
+
+function _savePropsLocal(list) {
+    list.forEach(name => {
+        localStorage[name] = JSON.stringify(window[name]);
+        console.log(`${name} stored locally`);
+    });
+}
+
+
+function _savePropsVk(list) {
+    if (!window.vk_user_id) return;
+    const vk_limit = 4096;
+    const props = {};
+    var ok = true;
+    list.forEach(name => {
+        let value = JSON.stringify(window[name]);
+        if (new Blob([value]).size <= vk_limit) {
+            props[name] = value;
+        } else {
+            ok = false;
+        }
+    });
+    if (ok) {
+        for (let k in props) {
+            vkBridge
+            .send("VKWebAppStorageSet", {key: k, value: props[k]});
+            console.log(`${name} sent to vk storage`);
+        }
+    }
+}
 
 
