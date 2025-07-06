@@ -245,7 +245,7 @@ function _loadPropsVk() {
             props[obj.key] = JSON.parse(obj.value);
         });
         vkBridge
-        .send("VKWebAppStorageGet", {"keys": Object.keys(props.prop_stored)})
+        .send("VKWebAppStorageGet", {"keys": Object.keys(props.prop_stored).filter(i => i.slice(0, 5) == 'prop_')})
         .then(data => {
             data.keys.forEach(obj => {
                 props[obj.key] = JSON.parse(obj.value);
