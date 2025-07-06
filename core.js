@@ -121,6 +121,7 @@ function initVk() {
             location.search.includes('vk_are_notifications_enabled=1');
         window.vk_is_favorite = 
             location.search.includes('vk_is_favorite=1');
+        _loadPropsVk();
     })
     .catch(error => {
         console.error(error);
@@ -219,7 +220,6 @@ function updateProps(props) {
 
 function appLoadProps() {
     _loadPropsLocal();
-    _loadPropsVk();
 }
 
 
