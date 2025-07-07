@@ -12,15 +12,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="description" content="Диагностика и наладка отношений средствами популярной психологии — доступно и увлекательно">
     <title>Погодавдо-метр</title>
-    <link rel="stylesheet" href="core.css?v=15">
-    <link rel="stylesheet" href="app.css?v=15">
+    <link rel="stylesheet" href="core.css?v=16">
+    <link rel="stylesheet" href="app.css?v=16">
     <!--link rel="manifest" href="app.webmanifest"-->
     <link rel="apple-touch-icon" href="icons/app192.png">
     <link rel="icon" href="icons/app48.png">
     <link rel="shortcut icon" href="icons/app48.png">
-    <script type="text/javascript" src="core.js?v=15"></script>
-    <script type="text/javascript" src="data.js?v=15"></script>
-    <script type="text/javascript" src="app.js?v=15"></script>
+    <script type="text/javascript" src="core.js?v=16"></script>
+    <script type="text/javascript" src="data.js?v=16"></script>
+    <script type="text/javascript" src="app.js?v=16"></script>
     <script src="browser.min.js"></script>
     <script src="sdk.js"></script>
 </head>
@@ -86,7 +86,7 @@
         </tr>
         <tr>
             <td colspan="2"><input type="text" name="name" onkeyup="changedProfile()" maxlength="23" placeholder="Имя" /></td>
-            <td rowspan="2" onclick="selectFile()"><b class="badge"></b></td>
+            <td rowspan="2" onclick="selectFile()" id="badge-place"><b class="badge"></b></td>
         </tr>
         <tr>
             <td colspan="2">

@@ -414,7 +414,7 @@ function embodyEdit() {
     const profile = appGetProfileByHash();
     const [input_name, soc_selector, psy_selector] = document.querySelectorAll('.-edit input[name="name"], .-edit select');
     const [soc_hint, psy_hint] = document.querySelectorAll('.-edit.hint div');
-    const image = document.querySelector('.-edit :has(>b.badge)');
+    const image = document.getElementById('badge-place');
     const button = document.querySelector('.-edit button');
     input_name.disabled = false;
     soc_selector.disabled = false;
@@ -493,7 +493,7 @@ function changedProfile(name, value) {
             input_name.value = value.replaceAll(/[<>]|^\s+$/g, '');
             if (!input_name.value && profile[0]) button.innerText = 'Удалить';
             else button.innerText = 'Сохранить';
-            let image = document.querySelector('.-edit :has(>b.badge)');
+            let image = document.getElementById('badge-place');
             let image_url = image.querySelector('a[style]').style.backgroundImage.slice(5, -2);
             image.innerHTML = coreBadge(image_url, value);
             appCachedProfileValue(0, value);
