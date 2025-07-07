@@ -774,7 +774,7 @@ function acceptTestP() {
 function visit(name) {
     var map = {
         'default': 'https://vk.com/shorewards',
-        'featured': 'https://vk.com/shorewards',
+        'featured': 'https://vk.com/shorewards?w=wall-117170606_344',
         'lexigo': 'https://vk.com/lexigo2',
         'antimatrix': 'https://vk.com/antimatriks',
         'lifetuner': 'https://vk.com/progressinator',

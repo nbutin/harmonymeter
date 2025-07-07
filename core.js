@@ -70,7 +70,7 @@ function coreAcronym(name) {
     var name = name && `${name}`.split(' ') || [''];
     var abbr = '';
     if (name.length > 1) name.forEach(i => {abbr += i[0] && [...i][0].toUpperCase() || ''});
-    return (abbr || [...name[0] || '']).slice(0, 3).join('');
+    return abbr.slice(0, 3) || ([...name[0] || '']).slice(0, 3).join('');
 }
 
 function embedded(scheme) {
