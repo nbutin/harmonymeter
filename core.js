@@ -172,10 +172,11 @@ function updateProps(props) {
     if (!props.prop_version || props.prop_version <= actual_version) {
         if (!window.prop_version) {
             window.prop_version = 1;
-            console.log(`embodied with initial props`)
+            console.log(`embodied with initial props`);
             embody();
         } else {
-            console.log(`actual version of props - ${actual_version}, loaded version - ${props.prop_version}`)
+            console.log(`actual version of props - ${actual_version}, loaded version - ${props.prop_version}`);
+            fixLayout();
         }
     } else if (props.prop_stored && props.prop_stored.toString() == "[object Object]") {
         window.prop_version = props.prop_version;
@@ -185,7 +186,7 @@ function updateProps(props) {
                 window[name] = props[name];
             }
         }
-        console.log(`props version updated from '${actual_version}' to ${window.prop_version}`)
+        console.log(`props version updated from '${actual_version}' to ${window.prop_version}`);
         embody();
     }
 }

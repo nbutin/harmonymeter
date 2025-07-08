@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (location.search.match(/vk_user_id=(\d+)/)) initVk();
     else if (window.self !== window.top) initBastyon();
     prepareSelectors();
-    setTimeout(appLoadProps, 5);
+    appLoadProps();
 });
 
 function calcSocRating(type_id) {
