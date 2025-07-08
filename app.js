@@ -3,7 +3,6 @@ function _reset() {
     window.prop_selected = undefined;
     window.prop_stored = {
         prop_profiles: [],
-        //~ 'image-12': '',
     };
     window.prop_profiles = [...characters];
 }
@@ -22,12 +21,10 @@ window.embodying_triggers = {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    prepareSelectors();
-    appLoadProps();
-    //~ engageTriggers();
-    //~ embodyMain();
     if (location.search.match(/vk_user_id=(\d+)/)) initVk();
     else if (window.self !== window.top) initBastyon();
+    prepareSelectors();
+    appLoadProps();
 });
 
 function calcSocRating(type_id) {
@@ -141,7 +138,7 @@ function calcAllRatings() {
 
 
 function appGetSelected() {
-    if (window.prop_selected != undefined) {
+    if (window.prop_selected != undefined && window.prop_profiles[window.prop_selected]) {
         return window.prop_selected;
     } else {
         const selfdeterminated = window.prop_profiles[0][1] + window.prop_profiles[0][1] > -2;
@@ -196,20 +193,22 @@ function embodyMain() {
         html += appBadge(v[6], [sr, pr, f1, f2, ie, jp, flag]).replace('onclick=""', `onclick="location.hash = '${href}'"`);
     });
     document.getElementById('map').innerHTML = html;
-    return html;
+    fixLayout();
 }
 
 
 // ok
 function embodySelect() {
     var items = [0, ...Object.keys(window.prop_profiles).slice(1).reverse()];
+    items = items.filter(x => ![null].includes(window.prop_profiles[x]));
     var html = '';
-    items.filter(x => ![null].includes(window.prop_profiles[x])).forEach(i => {
+    items.forEach(i => {
         let url = appStoredImage(i);
         html += coreBadge(url, window.prop_profiles[i][0], `window.prop_selected = ${i}; location.hash = '-main'`);
     });
     if (items.length % 4) html += `<b class="badge" style="width: calc(100% * ${4 - items.length % 4} / 4); aspect-ratio:${4 - items.length % 4}"></b>`;
     document.getElementById('selector').innerHTML = html;
+    fixLayout();
 }
 
 
@@ -356,6 +355,7 @@ function embodyMatching() {
         </tr>
     `;
     document.querySelector('#matching table').innerHTML = html;
+    fixLayout();
 }
 
 
@@ -366,6 +366,7 @@ function embodySpec(type_id) {
     document.querySelectorAll('.-spec-p strong').forEach((node, i) => {
         node.innerText = functions[type[0][i]];
     });
+    fixLayout();
 }
 
 
@@ -415,12 +416,15 @@ function embodyEdit() {
     const [input_name, soc_selector, psy_selector] = document.querySelectorAll('.-edit input[name="name"], .-edit select');
     const [soc_hint, psy_hint] = document.querySelectorAll('.-edit.hint div');
     const image = document.getElementById('badge-place');
+    image.style.height = `${image.offsetHeight}px` 
     const button = document.querySelector('.-edit button');
     input_name.disabled = false;
     soc_selector.disabled = false;
     psy_selector.disabled = false;
     soc_hint.innerHTML = '';
+    soc_hint.parentNode.hidden = true;
     psy_hint.innerHTML = '';
+    psy_hint.parentNode.hidden = true;
     input_name.value = fromCacheOrProfile(0);
     soc_selector.value = fromCacheOrProfile(1);
     changedProfile(soc_selector.name, soc_selector.value);
@@ -430,12 +434,12 @@ function embodyEdit() {
     if (profile[9] === 0) {
         input_name.disabled = true;
     } else if ('1 2 3 4 5 6 7 8 9'.includes(profile[9])) {
-        //~ input_name.disabled = true;
         soc_selector.disabled = true;
         psy_selector.disabled = true;
     }
     button.innerText = 'Сохранить'
     button.disabled = true;
+    fixLayout();
 }
 
 
@@ -500,17 +504,22 @@ function changedProfile(name, value) {
         } else if (name.split('-').slice(-1)[0] == 's') {
             if (parseInt(value) >= 0) {
                 hints[0].innerHTML = document.querySelector(`.-spec-s-${value}`).innerHTML;
+                hints[0].parentNode.hidden = false;
             } else {
                 hints[0].innerHTML = '';
+                hints[0].parentNode.hidden = true;
             }
         } else if (name.split('-').slice(-1)[0] == 'p') {
             if (parseInt(value) >= 0) {
                 embodySpec(value);
                 hints[1].innerHTML = document.querySelector('.-spec-p:not(.header)').innerHTML;
+                hints[1].parentNode.hidden = false;
             } else {
                 hints[1].innerHTML = '';
+                hints[1].parentNode.hidden = true;
             }
         }
+    fixLayout();
     }, 1);
 }
 
@@ -632,15 +641,9 @@ function altMain() {
     else location.hash = '-main';
 }
 
-//~ function test(v) {
-    //~ location.hash = `-test-${v && 'p' || 's'}-${location.hash.split('-').slice(-1)[0]}`;
-//~ }
-
 
 // ok
 function embodyTestS() {
-    //~ const profile = appGetProfileByHash();
-    //~ const profile_id = parseInt(location.hash.split('-').slice(-1)[0]);
     document.querySelector('.-test-s button:first-of-type').disabled = true;
     document.querySelectorAll('.-test-s input[type="radio"]').forEach(node => {
         node.checked = false;
@@ -667,17 +670,14 @@ function acceptTestS() {
     const form = document.querySelector('.-test-s form');
     const type_code = `${form.EI.value}${form.NS.value}${form.TF.value}${form.JP.value}`;
     appCachedProfileValue(9, appGetProfileByHash()[9]);
-    //~ const tested_id = parseInt(location.hash.split('-').slice(-1)[0]);
-    //~ window._cached_[9] = tested_id;
     soc_types.forEach((v, i) => {
-        if (v[3] == type_code) appCachedProfileValue(1, i); // window._cached_[1] = i;
+        if (v[3] == type_code) appCachedProfileValue(1, i);
     });
     history.back();
 }
 
 
 function embodyTestP() {
-    //~ const profile_id = parseInt(location.hash.split('-').slice(-1)[0]);
     const units = document.getElementsByClassName('-test-p');
     units[2].querySelector('button').disabled = true;
     units[1].querySelectorAll('input[type="radio"]').forEach(node => {
@@ -690,6 +690,7 @@ function embodyTestP() {
     units[1].querySelectorAll('.step2').forEach(node => {
         node.classList.add('hidden');
     });
+    fixLayout();
 }
 
 
@@ -705,7 +706,6 @@ function checkTestP(step) {
     }
     event.target.checked = true;
     event.target.dataset.checked = true;
-    //~ const block
     if (checked1.length == 1) {
         units[1].querySelectorAll('.step2').forEach(node => {
             node.classList.remove('hidden');
@@ -750,6 +750,7 @@ function checkTestP(step) {
     if (units[1].querySelectorAll('input[data-checked]').length == 4) {
         units[2].querySelector('button').disabled = false;
     }
+    fixLayout();
 }
 
 
@@ -782,35 +783,6 @@ function visit(name) {
     openExternalLink(map[name || 'default']);
 }
 
-//~ function visit(address) {
-    //~ var url = `https://bastyon.com/${address || app_author}`;
-    //~ if (sdk.applicationInfo) {
-        //~ sdk.helpers.channel(address || app_author)
-        //~ .catch(() => {
-            //~ openExternalLink(url);
-        //~ });
-    //~ } else {
-        //~ openLinkInNewWindow(url);
-    //~ }
-//~ }
-
-
-
-
-function share() {
-    //replace with opening an external link to the corresponding post
-    if (window.vk_user_id) {
-        var theme = 'story-theme';
-        sticker = 'sticker';
-        vkBridge.send('VKWebAppShowStoryBox', {
-            "background_type": "image",
-            "url": `${location.origin}/story.png`,
-            "locked": true,
-        });
-    } else {
-        //
-    }
-}
 
 function setup() {
     if (window.vk_user_id) {

@@ -1,12 +1,12 @@
 var core_history_of_embodyings = ['', '', ''];
 
 document.addEventListener('DOMContentLoaded', () => {
-    //~ if ('serviceWorker' in navigator) {
-        //~ navigator.serviceWorker.register('sw.js')
-        //~ .then(() => {
-            //~ console.log('Service Worker Registered');
-        //~ });
-    //~ }
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+        .then(() => {
+            console.log('Service Worker Registered');
+        });
+    }
     location.hash = '-main';
     window.addEventListener('hashchange', embody);
 });
@@ -79,20 +79,6 @@ function embedded(scheme) {
     else return `<${tag}>${embedded(scheme)}</${tag}>`;
 }
 
-// ok
-//~ function coreBadge(label, action, scheme, modifiers) {
-    //~ if (label && label.search(/.\.(png|jpe?g|svg|gif)$|^data:image\//) >= 0) var [url, abbr] = [label, ''];
-    //~ else var [url, abbr] = ['', label && coreAcronym(label) || '?'];
-    //~ action = action && action.replaceAll('"', "'");
-    //~ scheme = scheme && typeof(scheme) != 'string' && 'buabui' || scheme || 'ai';
-    //~ modifiers = typeof(modifiers) == 'string' && modifiers.trim().split(/\s+/) || modifiers;
-    //~ var html = `<b class="badge${modifiers && ' ' + modifiers.join(' ') || ''}">${embedded(scheme.split(''))}</b>`;
-    //~ html = html.replace('</a>', `</a><a${url && ' style="background-image:url(\'' + url + '\')"' || ''}${action && ' onclick="' + action + '"' || ''}></a>`);
-    //~ html = html.replace('<i></i>', `<i>${abbr || '?'}</i>`);
-    //~ return html;
-//~ }
-
-
 function coreBadge(image, label, onclick, featured, modifiers) {
     onclick = onclick && onclick.replaceAll('"', "'");
     featured = featured && typeof(featured) != 'string' && 'buai' || featured || 'ai';
@@ -136,19 +122,6 @@ function initBastyon() {
         sdk.emit('loaded');
     });
 }
-
-//~ function visit(address) {
-    //~ var url = `https://bastyon.com/${address || app_author}`;
-    //~ if (sdk.applicationInfo) {
-        //~ sdk.helpers.channel(address || app_author)
-        //~ .catch(() => {
-            //~ openExternalLink(url);
-        //~ });
-    //~ } else {
-        //~ openLinkInNewWindow(url);
-    //~ }
-//~ }
-
 
 function openExternalLink(url) {
     if (window.vk_user_id || !window.sdk || !window.sdk.applicationInfo) {

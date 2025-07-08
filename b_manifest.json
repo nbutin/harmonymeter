@@ -1,0 +1,8 @@
+{
+  "id": "pogodavdometer.app",
+  "name": "Погодавдо-метр",
+  "description": "Диагностика и наладка отношений средствами популярной психологии — доступно и увлекательно",
+  "author": "PHN3UprgHjMPQsiXkqEju9bAqCmD73H6B9",
+  "scope": "pogodavdometer.web.app",
+  "permissions": ["account", "sign", "externallink"]
+}
