@@ -688,7 +688,7 @@ function embodyTestP() {
         }
     });
     units[1].querySelectorAll('.step2').forEach(node => {
-        node.classList.add('hidden');
+        node.hidden = true;
     });
     fixLayout();
 }
@@ -708,7 +708,7 @@ function checkTestP(step) {
     event.target.dataset.checked = true;
     if (checked1.length == 1) {
         units[1].querySelectorAll('.step2').forEach(node => {
-            node.classList.remove('hidden');
+            node.hidden = false;
             form2.innerText = '';
             form3.innerText = '';
             form1.querySelectorAll('input').forEach(node => {
@@ -732,6 +732,7 @@ function checkTestP(step) {
                 });
             });
         });
+        fixLayout();
     } else if (event.target.name == '13' && checked2.length) {
         form2.querySelectorAll('input').forEach(node => {
             if (node.value != event.target.value) {
@@ -750,7 +751,6 @@ function checkTestP(step) {
     if (units[1].querySelectorAll('input[data-checked]').length == 4) {
         units[2].querySelector('button').disabled = false;
     }
-    fixLayout();
 }
 
 
