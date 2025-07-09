@@ -774,13 +774,22 @@ function acceptTestP() {
 
 function visit(name) {
     var map = {
+        'default': 'https://bastyon.com/sdrawerohs',
+        'webapp': 'https://pogodavdometer.web.app',
+        'featured': 'https://bastyon.com/index?video=1&v=7584fe0e38c8c4543f44dc80f2542187b51f171c96c3a63b5d62a6eb45585e9d',
+        'lexigo': 'https://bastyon.com/application?id=lexigo.app',
+        'antimatrix': 'https://bastyon.com/application?id=antimatrix.app',
+        'lifetuner': 'https://bastyon.com/application?id=lifetuner.app',
+    }
+    var vk_map = {
         'default': 'https://vk.com/shorewards',
+        'webapp': 'https://pogodavdometer.web.app',
         'featured': 'https://vk.com/shorewards?w=wall-117170606_344',
         'lexigo': 'https://vk.com/lexigo2',
         'antimatrix': 'https://vk.com/antimatriks',
         'lifetuner': 'https://vk.com/progressinator',
     }
-    openExternalLink(map[name || 'default']);
+    openExternalLink((window.vk_user_id && vk_map || map)[name || 'default']);
 }
 
 
@@ -800,5 +809,38 @@ function setup() {
         });
     } else {
         location.hash = '-settings';
+    }
+}
+
+
+
+
+
+
+
+
+
+var _install_prompt;
+
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    _install_prompt = e;
+});
+
+
+function install(){
+    if (_install_prompt){
+        _install_prompt.prompt();
+        _install_prompt.userChoice.then(r => {
+            if (r.outcome === 'accepted') {
+                log('Installation accepted');
+                alert('Приложение установлено :)');
+            } else {
+                log('Installation refused');
+            }
+        });
+    } else {
+        alert('Что-то пошло не так :(');
     }
 }
