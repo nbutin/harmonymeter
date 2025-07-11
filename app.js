@@ -776,7 +776,7 @@ function visit(name) {
     var map = {
         'default': 'https://bastyon.com/sdrawerohs',
         'webapp': 'https://pogodavdometer.web.app',
-        'featured': 'https://bastyon.com/index?video=1&v=7584fe0e38c8c4543f44dc80f2542187b51f171c96c3a63b5d62a6eb45585e9d',
+        'featured': 'https://bastyon.com/index?video=1&v=888d76fcbe1e28cc25b412d46344fd49e6c69c013743f14f1a52ef066d60bbf2',
         'lexigo': 'https://bastyon.com/application?id=lexigo.app',
         'antimatrix': 'https://bastyon.com/application?id=antimatrix.app',
         'lifetuner': 'https://bastyon.com/application?id=lifetuner.app',
