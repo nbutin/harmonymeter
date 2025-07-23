@@ -13,6 +13,7 @@ window.embodying_triggers = {
     '^-main(-.*)?$': embodyMain,
     '^-select$': embodySelect,
     '^-matching-\\d+$': embodyMatching,
+    '^-fandoms$': embodyFandoms,
     '^-spec-p-\\d+$': embodySpec,
     '^-edit(-.*)?$': embodyEdit,
     '^-test-s-': embodyTestS,
@@ -145,7 +146,14 @@ function appGetSelected() {
         if (selfdeterminated) {
             return 0;
         } else {
-            return 1;
+            let profile_id;
+            window.prop_profiles.some((v, i) => {
+                if (i > 0 && v) {
+                    profile_id = i;
+                    return true;
+                }
+            });
+            return profile_id;
         }
     }
 }
@@ -200,7 +208,7 @@ function embodyMain() {
 // ok
 function embodySelect() {
     var items = [0, ...Object.keys(window.prop_profiles).slice(1).reverse()];
-    items = items.filter(x => ![null].includes(window.prop_profiles[x]));
+    items = items.filter(x => ![null, undefined].includes(window.prop_profiles[x]));
     var html = '';
     items.forEach(i => {
         let url = appStoredImage(i);
@@ -214,9 +222,13 @@ function embodySelect() {
 
 // ok
 function appStoredImage(profile_id) {
-    return coreStoredImage(profile_id)
-        || ('1 2 3 4 5 6 7 8 9'.includes(parseInt(profile_id))
-        && `images/${profile_id}.jpg`) || '';
+    if (!window.non_saving_mode) {
+        return coreStoredImage(profile_id)
+            || ('1 2 3 4 5 6 7 8 9'.includes(parseInt(profile_id))
+            && `images/${profile_id}.jpg`) || '';
+    } else {
+        return parseInt(profile_id) > 0 && `https://shorewards.ru/psion/static/images/${profile_id}.jpg` || '';
+    }
 }
 
 
@@ -637,8 +649,15 @@ function coreStoredImage(id, data) {
 
 
 function altMain() {
-    if (location.hash == '#-main') location.hash = '-select';
-    else location.hash = '-main';
+    if (location.hash == '#-main') {
+        if ([154174327, 92610625].includes(parseInt(window.vk_user_id))) {
+            location.hash = '-fandoms';
+        } else {
+            location.hash = '-select';
+        }
+    } else {
+        location.hash = '-main';
+    }
 }
 
 
@@ -843,4 +862,32 @@ function install(){
     } else {
         alert('Что-то пошло не так :(');
     }
+}
+
+
+function embodyFandoms() {
+    if (!window.fandom_characters) {
+        fetch('https://shorewards.ru/psion/read')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.characters);
+            window.fandom_characters = data.characters;
+            let html = '';
+            data.sources.sort((a,b) => a[1].localeCompare(b[1])).forEach(i => {
+                html += `<option value="${i[0]}">${i[1]}</option>`;
+            });
+            document.getElementById('fandom').innerHTML = html;
+        });
+    }
+}
+
+function applyFandom() {
+    window.non_saving_mode = true;
+    const characters = [];
+    const fandom = document.getElementById('fandom').value;
+    window.fandom_characters.filter(i => i[2] == fandom).forEach(i => {
+        characters[i[0] - 1] = [i[1], i[3], i[4]];
+    });
+    window.prop_profiles = [window.prop_profiles[0], ...characters];
+    location.hash = '-main';
 }

@@ -12,15 +12,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="description" content="Диагностика и наладка отношений средствами популярной психологии — доступно и увлекательно">
     <title>Погодавдо-метр</title>
-    <link rel="stylesheet" href="core.css?v=24">
-    <link rel="stylesheet" href="app.css?v=24">
+    <link rel="stylesheet" href="core.css?v=25">
+    <link rel="stylesheet" href="app.css?v=25">
     <link rel="manifest" href="app.webmanifest">
     <link rel="apple-touch-icon" href="icons/app192.png">
     <link rel="icon" href="icons/app48.png">
     <link rel="shortcut icon" href="icons/app48.png">
-    <script type="text/javascript" src="core.js?v=24"></script>
-    <script type="text/javascript" src="data.js?v=24"></script>
-    <script type="text/javascript" src="app.js?v=24"></script>
+    <script type="text/javascript" src="core.js?v=25"></script>
+    <script type="text/javascript" src="data.js?v=25"></script>
+    <script type="text/javascript" src="app.js?v=25"></script>
     <script src="browser.min.js"></script>
     <script src="sdk.js"></script>
 </head>
@@ -337,6 +337,21 @@
             <td><button onclick="install()">Установить</button></td>
         </tr>
     </table>
+</div>
+
+
+<!-- fandom -->
+<div class="header part-of -fandoms">
+    <h2>Смена фандома</h2>
+</div>
+<div class="blank part-of -fandoms">
+    <hr/>
+    <p>Правки сделанные в режиме измененного фандома <i class="red-marked">не сохраняются</i>.</p>
+    <p><select id="fandom" class="fullwidth"></select></p>
+</div>
+<div class="footer part-of -fandoms">
+    <hr/>
+    <button onclick="applyFandom()" class="fullwidth">Применить</button>
 </div>
 
 
